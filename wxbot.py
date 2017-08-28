@@ -94,7 +94,8 @@ class WXBot:
         self.cursor = 0   #拉取联系人信息的游标
         self.is_big_contact = False  #通讯录人数过多，无法直接获取
         #文件缓存目录
-        self.temp_pwd  =  os.path.join(os.getcwd(),'temp')
+        self.temp_pwd = os.path.join(os.getcwd(),'tmp')
+        self.qr_pwd = os.path.join(os.getcwd(),'wxqr_fold')
         if os.path.exists(self.temp_pwd) == False:
             os.makedirs(self.temp_pwd)
 
@@ -1178,7 +1179,7 @@ class WXBot:
     def run(self):
         try:
             self.get_uuid()
-            self.gen_qr_code(os.path.join(self.temp_pwd,'wxqr.png'))
+            self.gen_qr_code(os.path.join(self.qr_pwd,'wxqr.png'))
             print '[INFO] Please use WeChat to scan the QR code .'
 
             result = self.wait4login()
