@@ -34,8 +34,9 @@ class MyWXBot(WXBot):
             msgarr = msgStr.split('|')
             if len(msgarr) == 2:
                 msg = msgarr[1]
-            #self.send_msg(u'芦一', msg)
+            self.send_msg(u'芦一', msg)
             self.send_msg(u'xinba', msg)
+            self.send_msg(u'顺风', msg)
 
 
 def main():
