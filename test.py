@@ -28,13 +28,15 @@ class MyWXBot(WXBot):
         mgRedis = init_redis('127.0.0.1', 6379, 0)
         while True:
             msgStr = mgRedis.lpop('ques_grad_mq')
+            print msgStr
             if not msgStr:
                 time.sleep(5)
                 continue
             msgarr = msgStr.split('|')
             if len(msgarr) == 2:
+                toUser = msgarr[0]
                 msg = msgarr[1]
-            #self.send_msg(u'芦一', msg)
+            self.send_msg(toUser,msg)
             self.send_msg(u'xinba', msg)
 
 
