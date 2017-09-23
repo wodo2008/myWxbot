@@ -11,6 +11,7 @@ TO = "1157715152@qq.com"
 FROM = "liujun4719@163.com"
 
 def addimg(src,imgid):
+    print src
     while not os.path.exists(src):
         continue
     fp = open(src, 'rb')
@@ -22,7 +23,7 @@ def addimg(src,imgid):
 msg = MIMEMultipart('related')
 msgtext = MIMEText("<font color=red>微信登陆二维码:</font>","html","utf-8")
 msg.attach(msgtext)
-msg.attach(addimg("../wxqr_fold/wxqr.png","wxqr"))
+msg.attach(addimg("/home/myWxbot/wxqr_fold/wxqr.png","wxqr"))
 
 #attach = MIMEText(open("doc/week_report.xlsx", "rb").read(), "base64", "utf-8")
 #attach["Content-Type"] = "application/octet-stream"
