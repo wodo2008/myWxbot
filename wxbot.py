@@ -1117,6 +1117,35 @@ class WXBot:
         except Exception,e:
             return False
 
+    def send_img_msg(self,name,fpath):
+        uid = self.get_user_id(name)
+        mid = self.upload_media(fpath, is_img=True)
+        if mid is None:
+            return False
+        url = self.base_uri + '/webwxsendmsgimg?fun=async&f=json'
+        data = {
+                'BaseRequest': self.base_request,
+                'Msg': {
+                    'Type': 3,
+                    'MediaId': mid,
+                    'FromUserName': self.my_account['UserName'],
+                    'ToUserName': uid,
+                    'LocalID': str(time.time() * 1e7),
+                    'ClientMsgId': str(time.time() * 1e7), }, }
+        if fpath[-4:] == '.gif':
+            url = self.base_uri + '/webwxsendemoticon?fun=sys'
+            data['Msg']['Type'] = 47
+            data['Msg']['EmojiFlag'] = 2
+        try:
+            r = self.session.post(url, data=json.dumps(data))
+            res = json.loads(r.text)
+            if res['BaseResponse']['Ret'] == 0:
+                return True
+            else:
+                return False
+        except Exception,e:
+            return False
+
     def get_user_id(self, name):
         if name == '':
             return None
