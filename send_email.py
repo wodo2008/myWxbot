@@ -3,6 +3,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
+import os
 
 HOST = "smtp.163.com"
 SUBJECT = u"微信登陆二维码"
@@ -10,6 +11,8 @@ TO = "1157715152@qq.com"
 FROM = "liujun4719@163.com"
 
 def addimg(src,imgid):
+    while not os.path.exists(src):
+        continue
     fp = open(src, 'rb')
     msgImage = MIMEImage(fp.read())
     fp.close()
