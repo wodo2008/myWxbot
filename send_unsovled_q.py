@@ -17,8 +17,8 @@ class MyWXBot(WXBot):
 
         if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
             print msg['user']['id']
-            self.send_msg_by_uid(u'hi', msg['user']['id'])
-            self.send_img_msg_by_uid("img/1.png", msg['user']['id'])
+            #self.send_msg_by_uid(u'hi', msg['user']['id'])
+            #self.send_img_msg_by_uid("img/1.png", msg['user']['id'])
             #self.send_file_msg_by_uid("img/1.png", msg['user']['id'])
 
 
@@ -33,16 +33,16 @@ class MyWXBot(WXBot):
             print msgStr
             if not msgStr:
                 time.sleep(5)
-                continue
+                break
             msgarr = msgStr.split('|')
             if len(msgarr) == 2:
                 toUser = msgarr[0]
                 msg = msgarr[1]
                 toUserSet.add(toUser)
         for user in toUser:
-            print 'send user:',user
-            self.send_msg(toUser,qrPath % user)
-            self.send_msg(u'wodo2008', qrPath % user)
+            print 'send user:',user,qrPath % user
+            self.send_img_msg(user,qrPath % user)
+            self.send_img_msg(u'wodo2008', qrPath % user)
 
 
 def main():
