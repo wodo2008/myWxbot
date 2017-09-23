@@ -1119,7 +1119,7 @@ class WXBot:
 
     def send_img_msg(self,name,fpath):
         uid = self.get_user_id(name)
-        print 'uid:',uid
+        print 'send_img_msg,uid:', uid
         mid = self.upload_media(fpath, is_img=True)
         if mid is None:
             return False
@@ -1170,6 +1170,7 @@ class WXBot:
 
     def send_msg(self, name, word, isfile=False):
         uid = self.get_user_id(name)
+        print 'send_msg,uid:',uid
         if uid is not None:
             if isfile:
                 with open(word, 'r') as f:
