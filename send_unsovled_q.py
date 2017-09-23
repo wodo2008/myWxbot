@@ -32,7 +32,7 @@ class MyWXBot(WXBot):
         qrPath = 'grad_qrs/%s.jpg'
         now = time.time()
         nowstr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))
-        msg = '亲，截至%s,您在大同学吧还有如下问题没有回答，请在近期给予答复~' % nowstr
+        msgtext = '亲，截至%s,您在大同学吧还有如下问题没有回答，请在近期给予答复~' % nowstr
 
         while True:
             msgStr = mgRedis.lpop('ques_grad_mq')
@@ -47,7 +47,7 @@ class MyWXBot(WXBot):
                 toUserSet.add(toUser)
         for user in toUserSet:
             print 'send user:',user,qrPath % user
-            self.send_msg(user,msg)
+            self.send_msg(user,msgtext)
             self.send_img_msg(user,qrPath % user)
             self.send_img_msg(u'wodo2008', qrPath % user)
 
