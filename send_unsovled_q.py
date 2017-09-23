@@ -18,7 +18,8 @@ class MyWXBot(WXBot):
         if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
             print msg['user']['id']
             #self.send_msg_by_uid(u'hi', msg['user']['id'])
-            #self.send_img_msg_by_uid("img/1.png", msg['user']['id'])
+            print msg['user']['id']
+            self.send_img_msg_by_uid("img/1.png", msg['user']['id'])
             #self.send_file_msg_by_uid("img/1.png", msg['user']['id'])
 
 
@@ -32,7 +33,7 @@ class MyWXBot(WXBot):
             msgStr = mgRedis.lpop('ques_grad_mq')
             print msgStr
             if not msgStr:
-                time.sleep(5)
+                #time.sleep(5)
                 break
             msgarr = msgStr.split('|')
             if len(msgarr) == 2:
