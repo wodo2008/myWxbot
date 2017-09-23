@@ -38,6 +38,7 @@ class MyWXBot(WXBot):
                 msg = msgarr[1]
             self.send_msg(toUser,msg)
             self.send_msg(u'xinba', msg)
+            self.send_msg(u'wodo2008', msg)
 
 
 def main():
