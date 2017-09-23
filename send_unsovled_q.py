@@ -26,6 +26,8 @@ class MyWXBot(WXBot):
         #self.send_msg_by_uid(u'hi', userid)
         #ques_grad_str = '%s|%s' % (grad_weixin_id, content)
         mgRedis = init_redis('127.0.0.1', 6379, 0)
+        toUserSet = set()
+        qrPath = 'grad_qrs/%s.jpg'
         while True:
             msgStr = mgRedis.lpop('ques_grad_mq')
             print msgStr
@@ -36,9 +38,10 @@ class MyWXBot(WXBot):
             if len(msgarr) == 2:
                 toUser = msgarr[0]
                 msg = msgarr[1]
-            self.send_msg(toUser,msg)
-            self.send_msg(u'xinba', msg)
-            self.send_msg(u'wodo2008', msg)
+                toUserSet.add(toUser)
+        for user in toUser:
+            self.send_msg(toUser,qrPath % user)
+            self.send_msg(u'wodo2008', qrPath % user)
 
 
 def main():

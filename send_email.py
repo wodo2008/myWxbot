@@ -15,15 +15,16 @@ def addimg(src,imgid):
     while not os.path.exists(src):
         continue
     fp = open(src, 'rb')
-    msgImage = MIMEImage(fp.read())
+    msgImage = MIMEImage(fp.read(),_subtype='octet-stream')
     fp.close()
-    msgImage.add_header('Content-ID', imgid)
+    msgImage.add_header('Content-Disposition', 'attachment', filename=('gbk', '', imgid))
+    #msgImage.add_header('Content-ID', imgid)
     return msgImage
 
 msg = MIMEMultipart('related')
 msgtext = MIMEText("<font color=red>微信登陆二维码:</font>","html","utf-8")
 msg.attach(msgtext)
-msg.attach(addimg("/home/myWxbot/wxqr_fold/wxqr.png","wxqr"))
+msg.attach(addimg("/home/myWxbot/wxqr_fold/wxqr.png","wxqr.png"))
 
 #attach = MIMEText(open("doc/week_report.xlsx", "rb").read(), "base64", "utf-8")
 #attach["Content-Type"] = "application/octet-stream"
