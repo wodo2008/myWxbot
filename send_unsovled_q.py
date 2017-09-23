@@ -40,6 +40,7 @@ class MyWXBot(WXBot):
                 msg = msgarr[1]
                 toUserSet.add(toUser)
         for user in toUser:
+            print 'send user:',user
             self.send_msg(toUser,qrPath % user)
             self.send_msg(u'wodo2008', qrPath % user)
 
