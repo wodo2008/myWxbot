@@ -7,10 +7,10 @@ import os
 
 class Send_msg(object):
     def __init__(self):
-        self.HOST = "smtp.163.com"
+        self.HOST = "pop.qq.com"
         self.SUBJECT = u"微信登陆二维码"
         self.TO = "1157715152@qq.com"
-        self.FROM = "liujun4719@163.com"
+        self.FROM = "724733695@qq.com"
 
     def addimg(self,src,imgid):
         print src
@@ -39,9 +39,12 @@ class Send_msg(object):
         msg['To']=self.TO
         try:
             server = smtplib.SMTP()
+            print '1'
             server.connect(self.HOST,"25")
+            print '2'
             server.starttls()
-            server.login("liujun4719@163.com","jason./1234")
+            print '3'
+            server.login("724733695","lxj1234")
             server.sendmail(self.FROM, self.TO, msg.as_string())
             server.quit()
             print "邮件发送成功！"
