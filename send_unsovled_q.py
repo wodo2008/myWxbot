@@ -49,6 +49,7 @@ class MyWXBot(WXBot):
             print 'send user:',user,qrPath % user
             self.send_msg(user,msgtext)
             self.send_img_msg(user,qrPath % user)
+            self.send_msg(u'wodo2008', msgtext)
             self.send_img_msg(u'wodo2008', qrPath % user)
 
 
