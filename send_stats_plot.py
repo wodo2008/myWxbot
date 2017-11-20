@@ -18,19 +18,22 @@ class MyWXBot(WXBot):
             #self.send_file_msg_by_uid("img/1.png", msg['user']['id'])
 
     def schedule(self):
-
+        canSend = True
         while True:
-            if is_send_statsPlot():
+            if is_send_statsPlot() and canSend:
                 line_plot(10000)
                 self.send_img_msg(u'Tobe_Lu', 'data_statis.png')
                 self.send_img_msg(u'wodo2008', 'data_statis.png')
-            time.sleep(55 * 600)
+                canSend = False
+            if not is_send_statsPlot():
+                canSend = True
+            time.sleep(100)
 
 
 def is_send_statsPlot():
     now = time.time()
     hour = int(time.strftime('%H',time.localtime(now)))
-    if hour == 6:
+    if hour == 9:
         return True
     return False
 

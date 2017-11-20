@@ -23,7 +23,7 @@ def line_plot(target_num):
         thisday = time.strftime('%Y-%m-%d',
                                 time.localtime(time.mktime(time.strptime(str(first_day),
                                                                          '%Y-%m-%d')) + i * 24 * 3600))
-        if str(thisday) >= time.strftime('%Y-%m-%d', time.localtime(now - 24 * 3600)):
+        if str(thisday) >= time.strftime('%Y-%m-%d', time.localtime(now)):
             break
         dx.append(thisday)
         dy1.append(int(A * (i + 1) + B))
