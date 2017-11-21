@@ -6,6 +6,7 @@ from wxbot import *
 # import redis
 import time
 from datastatis_ploty import line_plot
+import json
 
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
@@ -18,12 +19,23 @@ class MyWXBot(WXBot):
             #self.send_file_msg_by_uid("img/1.png", msg['user']['id'])
 
     def schedule(self):
+        groupId = ''
+        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'tmp\\group_list.json')
+        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[1],'../tmp/group_list.json')))
+        for group in group_list:
+            PYQuanPin= group['PYQuanPin']
+            UserName = group['UserName']
+            if PYQuanPin =="zhuogongshengyagongzuoshijiaoliuqun":
+                groupId = UserName
+                break
+
         canSend = True
         while True:
             if is_send_statsPlot() and canSend:
                 line_plot(10000)
-                self.send_img_msg(u'Tobe_Lu', 'data_statis.png')
+                #self.send_img_msg(u'Tobe_Lu', 'data_statis.png')
                 self.send_img_msg(u'wodo2008', 'data_statis.png')
+                self.send_img_msg(groupId, 'data_statis.png')
                 canSend = False
             if not is_send_statsPlot():
                 canSend = True
@@ -33,7 +45,7 @@ class MyWXBot(WXBot):
 def is_send_statsPlot():
     now = time.time()
     hour = int(time.strftime('%H',time.localtime(now)))
-    if hour == 9:
+    if hour == 10:
         return True
     return False
 
