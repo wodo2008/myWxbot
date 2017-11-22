@@ -6,7 +6,9 @@ def get_stats_data(sday,eday):
                     '&appid=wx05343850acb08432&secret=2b83f796402b2483e76088936f21d7ef'
     data_url = 'https://api.weixin.qq.com/datacube/getusercumulate?access_token=%s'
     token_result = requests.post(token_url)
+    print 'token_result.text:',token_result.text
     token_data = json.loads(token_result.text)
+    print 'token_data:',token_data
     access_token = token_data['access_token']
     data = {}
     data['begin_date'] = sday

@@ -84,9 +84,11 @@ class WXBot:
         self.sync_key_str = ''
         self.sync_key = []
         self.sync_host = ''
+        self.groupId_dict = {}
+        self.redis = None
 
-        status = 'wait4login'    #表示机器人状态，供WEBAPI读取，WxbotManage使用
-        bot_conf = {} #机器人配置，在webapi初始化的时候传入，后续也可修改，WxbotManage使用
+        self.status = 'wait4login'    #表示机器人状态，供WEBAPI读取，WxbotManage使用
+        self.bot_conf = {} #机器人配置，在webapi初始化的时候传入，后续也可修改，WxbotManage使用
 
         self.batch_count = 50    #一次拉取50个联系人的信息
         self.full_user_name_list = []    #直接获取不到通讯录时，获取的username列表
@@ -94,8 +96,7 @@ class WXBot:
         self.cursor = 0   #拉取联系人信息的游标
         self.is_big_contact = False  #通讯录人数过多，无法直接获取
         #文件缓存目录
-        self.temp_pwd = os.path.join(os.getcwd(),'tmp')
-        self.qr_pwd = os.path.join(os.getcwd(),'wxqr_fold')
+        self.temp_pwd  =  os.path.join(os.getcwd(),'temp')
         if os.path.exists(self.temp_pwd) == False:
             os.makedirs(self.temp_pwd)
 
@@ -154,17 +155,20 @@ class WXBot:
 
     def get_contact(self):
         """获取当前账户的所有相关账号(包括联系人、公众号、群聊、特殊账号)"""
-        dic_list = []
-        url = self.base_uri + '/webwxgetcontact?seq=0&pass_ticket=%s&skey=%s&r=%s' \
+        if self.is_big_contact:
+            return False
+        url = self.base_uri + '/webwxgetcontact?pass_ticket=%s&skey=%s&r=%s' \
                               % (self.pass_ticket, self.skey, int(time.time()))
         #url = self.base_uri + '/webwxsync?sid=%s&skey=%s' % (self.sid, self.skey)
         print url
         #如果通讯录联系人过多，这里会直接获取失败
         try:
-            r = self.session.post(url, data='{}', timeout=180)
+            r = self.session.post(url, data='{}')
         except Exception as e:
+            self.is_big_contact = True
             return False
         r.encoding = 'utf-8'
+<<<<<<< HEAD
         dic = json.loads(r.text)
         print 'dic:',dic
         dic_list.append(dic)
@@ -178,13 +182,13 @@ class WXBot:
             dic = json.loads(r.text)
             dic_list.append(dic)
 
+=======
+>>>>>>> 0b9679dc6007d50cba9a5af8986eb4ab41c06fa7
         if self.DEBUG:
             with open(os.path.join(self.temp_pwd,'contacts.json'), 'w') as f:
-                f.write(json.dumps(dic_list))
-
-        self.member_list = []
-        for dic in dic_list:
-            self.member_list.extend(dic['MemberList'])
+                f.write(r.text.encode('utf-8'))
+        dic = json.loads(r.text)
+        self.member_list = dic['MemberList']
 
         special_users = ['newsapp', 'fmessage', 'filehelper', 'weibo', 'qqmail',
                          'fmessage', 'tmessage', 'qmessage', 'qqsync', 'floatbottle',
@@ -713,7 +717,7 @@ class WXBot:
                     with open(os.path.join(self.temp_pwd,'wxid.txt'), 'w') as f:
                         f.write(json.dumps(self.wxid_list))
                     print "[INFO] Contact list is too big. Now start to fetch member list ."
-                    #self.get_big_contact()
+                    self.get_big_contact()
 
             elif msg['MsgType'] == 37:  # friend request
                 msg_type_id = 37
@@ -771,6 +775,7 @@ class WXBot:
     def proc_msg(self):
         self.test_sync_check()
         self.status = 'loginsuccess'  #WxbotManage使用
+        self.schedule()
         while True:
             if self.status == 'wait4loginout':  #WxbotManage使用
                 return 
@@ -813,7 +818,6 @@ class WXBot:
                 else:
                     print '[DEBUG] sync_check:', retcode, selector
                     time.sleep(10)
-                self.schedule()
             except:
                 print '[ERROR] Except in proc_msg'
                 print format_exc()
@@ -1119,36 +1123,6 @@ class WXBot:
         except Exception,e:
             return False
 
-    def send_img_msg(self,name,fpath):
-        uid = self.get_user_id(name)
-        print 'send_img_msg,uid:', uid
-        mid = self.upload_media(fpath, is_img=True)
-        if mid is None:
-            return False
-        url = self.base_uri + '/webwxsendmsgimg?fun=async&f=json'
-        data = {
-                'BaseRequest': self.base_request,
-                'Msg': {
-                    'Type': 3,
-                    'MediaId': mid,
-                    'FromUserName': self.my_account['UserName'],
-                    'ToUserName': uid,
-                    'LocalID': str(time.time() * 1e7),
-                    'ClientMsgId': str(time.time() * 1e7), }, }
-        if fpath[-4:] == '.gif':
-            url = self.base_uri + '/webwxsendemoticon?fun=sys'
-            data['Msg']['Type'] = 47
-            data['Msg']['EmojiFlag'] = 2
-        try:
-            r = self.session.post(url, data=json.dumps(data))
-            res = json.loads(r.text)
-            if res['BaseResponse']['Ret'] == 0:
-                return True
-            else:
-                return False
-        except Exception,e:
-            return False
-
     def get_user_id(self, name):
         if name == '':
             return None
@@ -1172,7 +1146,6 @@ class WXBot:
 
     def send_msg(self, name, word, isfile=False):
         uid = self.get_user_id(name)
-        print 'send_msg,uid:',uid
         if uid is not None:
             if isfile:
                 with open(word, 'r') as f:
@@ -1212,7 +1185,7 @@ class WXBot:
     def run(self):
         try:
             self.get_uuid()
-            self.gen_qr_code(os.path.join(self.qr_pwd,'wxqr.png'))
+            self.gen_qr_code(os.path.join(self.temp_pwd,'wxqr.png'))
             print '[INFO] Please use WeChat to scan the QR code .'
 
             result = self.wait4login()
@@ -1436,7 +1409,7 @@ class WXBot:
             r.encoding = 'utf-8'
             dic = json.loads(r.text)
             if dic['BaseResponse']['Ret'] == 0:
-                self.sync_key = dic['SyncCheckKey']
+                self.sync_key = dic['SyncKey']
                 self.sync_key_str = '|'.join([str(keyVal['Key']) + '_' + str(keyVal['Val'])
                                               for keyVal in self.sync_key['List']])
             return dic
