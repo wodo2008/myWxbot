@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from wxbot import *
 import ConfigParser
 import json
+from wxbot import WXBot
 
 
 class TulingWXBot(WXBot):
