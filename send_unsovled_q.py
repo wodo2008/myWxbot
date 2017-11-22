@@ -56,8 +56,8 @@ class MyWXBot(WXBot):
         #     self.send_img_msg(u'wodo2008', qrPath % user)
             line_plot(10000)
             self.send_img_msg(u'Tobe_Lu', 'data_statis.png')
-            self.send_img_msg_by_uid("img/1.png", u'@80c1eaab9a090dd5770cd55c804e8022725a5542e8f596700368f3b68522cb17')
-            self.send_msg_by_uid('hello',u'@80c1eaab9a090dd5770cd55c804e8022725a5542e8f596700368f3b68522cb17')
+            self.send_img_msg_by_uid("data_statis.png", u'@@7526ebd681338fa665b7ad0d7cff91b70aab910658ab3462aa587d79e6740121')
+            self.send_msg_by_uid('hello',u'@@7526ebd681338fa665b7ad0d7cff91b70aab910658ab3462aa587d79e6740121')
             time.sleep(1000)
 
 

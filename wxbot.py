@@ -157,7 +157,8 @@ class WXBot:
         dic_list = []
         url = self.base_uri + '/webwxgetcontact?seq=0&pass_ticket=%s&skey=%s&r=%s' \
                               % (self.pass_ticket, self.skey, int(time.time()))
-
+        #url = self.base_uri + '/webwxsync?sid=%s&skey=%s' % (self.sid, self.skey)
+        print url
         #如果通讯录联系人过多，这里会直接获取失败
         try:
             r = self.session.post(url, data='{}', timeout=180)
@@ -165,6 +166,7 @@ class WXBot:
             return False
         r.encoding = 'utf-8'
         dic = json.loads(r.text)
+        print 'dic:',dic
         dic_list.append(dic)
 
         while int(dic["Seq"]) != 0:
