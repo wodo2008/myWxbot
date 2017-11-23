@@ -593,6 +593,7 @@ class WXBot:
             if self.DEBUG:
                 print '    %s[useradd] %s' % (msg_prefix,msg['RecommendInfo']['NickName'])
         elif mtype == 42:
+            print 'recom,msg:',msg
             msg_content['type'] = 5
             info = msg['RecommendInfo']
             msg_content['data'] = {'nickname': info['NickName'],
