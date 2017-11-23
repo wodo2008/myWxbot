@@ -30,11 +30,11 @@ class MyWXBot(WXBot):
             #self.send_file_msg_by_uid("img/1.png", msg['user']['id'])
 
     def schedule(self):
-        t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
-        # t1 = threading.Thread(target=self.stats_plot,args={'zhuogongshengyagongzuoshijiaoliuqun'})
+        # t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
+        t1 = threading.Thread(target=self.stats_plot,args={'zhuogongshengyagongzuoshijiaoliuqun'})
         t1.start()
-        t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
-        t2.start()
+        # t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
+        # t2.start()
 
     #对于新加入的进行回应
     def group_newer_response(self,g_pinyin,msg):
@@ -100,6 +100,7 @@ class MyWXBot(WXBot):
         print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\\group_list.json')
         group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\\group_list.json')))
         for group in group_list:
+            print 'group:',group
             PYQuanPin= group['PYQuanPin']
             UserName = group['UserName']
             if PYQuanPin == qunPinyin:
