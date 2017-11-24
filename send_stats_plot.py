@@ -91,7 +91,7 @@ class MyWXBot(WXBot):
             #has_Img_users = tRedis.smembers('hasImgUsers')
             has_Img_users = tRedis
             gid = self.getGroupId(qunPinyin)
-            all_group_members = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\\group_users.json')))
+            all_group_members = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_users.json')))
             group_members = all_group_members[gid]
             for gm in group_members:
                 NickName = gm['NickName']
@@ -106,8 +106,8 @@ class MyWXBot(WXBot):
         if qunPinyin in self.groupId_dict:
             return self.groupId_dict[qunPinyin]
         groupId = ''
-        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\\group_list.json')
-        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\\group_list.json')))
+        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')
+        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')))
         for group in group_list:
             print 'group:',group
             PYQuanPin= group['PYQuanPin']
@@ -127,14 +127,13 @@ class MyWXBot(WXBot):
             print 'stats_plot process'
             if is_send_statsPlot() and canSend:
                 line_plot(10000)
-                self.send_img_msg(u'Tobe_Lu', 'data_statis.png')
-                self.send_img_msg(u'wodo2008', 'data_statis.png')
+                self.send_img_msg_by_uid(self.get_user_id('Tobe_Lu'),'data_statis.png')
+                self.send_img_msg_by_uid(self.get_user_id('wodo2008'), 'data_statis.png')
                 self.send_img_msg_by_uid("data_statis.png", groupId)
-                self.send_img_msg(groupId, 'data_statis.png')
                 canSend = False
             if not is_send_statsPlot():
                 canSend = True
-            time.sleep(100)
+            time.sleep(3600)
 
     def send_unsovled_q(self):
         mgRedis = init_redis('127.0.0.1', 6379, 0)
