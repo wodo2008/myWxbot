@@ -175,7 +175,7 @@ class MyWXBot(WXBot):
 def is_send_statsPlot():
     now = time.time()
     hour = int(time.strftime('%H',time.localtime(now)))
-    if hour == 11:
+    if hour == 9:
         return True
     return False
 #根据群名称的拼音获取群的ID
