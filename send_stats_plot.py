@@ -8,14 +8,14 @@ import time
 from datastatis_ploty import line_plot
 import json
 import threading
-import redis
+#import redis
 
-def init_redis(host,port,db,password=None):
-    if password :
-        pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
-    else:
-        pool = redis.ConnectionPool(host=host,port=int(port),db=int(db))
-    return redis.Redis(connection_pool=pool)
+# def init_redis(host,port,db,password=None):
+#     if password :
+#         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
+#     else:
+#         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db))
+#     return redis.Redis(connection_pool=pool)
 
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
@@ -122,46 +122,43 @@ class MyWXBot(WXBot):
         print 'Start Stats_plot'
         groupId = self.getGroupId(qunPinyin)
         print 'groupId:',groupId
-        canSend = True
         while True:
-            print 'stats_plot process'
-            if is_send_statsPlot() and canSend:
+            if is_send(['8','14']):
+                print 'stats_plot process'
                 line_plot(10000)
-                self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
+                #self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
                 self.send_img_msg_by_uid('data_statis.png',self.get_user_id('wodo2008'))
-                self.send_img_msg_by_uid("data_statis.png", groupId)
-                canSend = False
-            if not is_send_statsPlot():
-                canSend = True
+                #self.send_img_msg_by_uid("data_statis.png", groupId)
             time.sleep(3600)
 
     def send_unsovled_q(self):
-        mgRedis = init_redis('127.0.0.1', 6379, 0)
-        toUserSet = set()
-        qrPath = 'grad_qrs/%s.jpg'
-        now = time.time()
-        nowstr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))
-        msgtext = '亲，截至%s,您在大同学吧还有如下问题没有回答，请在近期给予答复~' % nowstr
         while True:
-            msgStr = mgRedis.lpop('ques_grad_mq')
-            print msgStr
-            if not msgStr:
-                #time.sleep(5)
-                break
-            msgarr = msgStr.split('|')
-            if len(msgarr) == 2:
-                toUser = msgarr[0]
-                msg = msgarr[1]
-                toUserSet.add(toUser)
-            time.sleep(200)
-        for user in toUserSet:
-            print 'send user:',user,qrPath % user
-            self.send_msg(user,msgtext)
-            self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
-            self.send_img_msg(user,qrPath % user)
-            self.send_msg(u'wodo2008',msgtext)
-            self.send_img_msg(u'wodo2008', qrPath % user)
-            time.sleep(100)
+            time.sleep(3600)
+            if not is_send(['14','19']):
+                return
+            mgRedis = init_redis('127.0.0.1', 6379, 0)
+            toUserSet = set()
+            qrPath = 'grad_qrs/%s.jpg'
+            now = time.time()
+            nowstr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))
+            msgtext = '亲，截至%s,您在大同学吧还有如下问题没有回答，请在近期给予答复~' % nowstr
+            while True:
+                msgStr = mgRedis.lpop('ques_grad_mq')
+                print msgStr
+                if not msgStr:
+                    #time.sleep(5)
+                    break
+                msgarr = msgStr.split('|')
+                if len(msgarr) == 2:
+                    toUser = msgarr[0]
+                    msg = msgarr[1]
+                    toUserSet.add(toUser)
+            for user in toUserSet:
+                print 'send user:',user,qrPath % user
+                # self.send_msg(self.get_user_id(user),msgtext)
+                # self.send_img_msg_by_uid(qrPath % user,self.get_user_id(user))
+                self.send_msg(u'wodo2008',msgtext)
+                self.send_img_msg_by_uid(qrPath % user,self.get_user_id(u'wodo2008'))
 
 
     def getRedis(self):
@@ -173,14 +170,14 @@ class MyWXBot(WXBot):
             return self.redis
 
 
-def is_send_statsPlot():
+def is_send(hourArr):
+    if not isinstance(hourArr,list):
+        return False
     now = time.time()
-    hour = int(time.strftime('%H',time.localtime(now)))
-    if hour == 11:
+    hour = str(time.strftime('%H',time.localtime(now)))
+    if hour in hourArr:
         return True
     return False
-#根据群名称的拼音获取群的ID
-
 
 def main():
     bot = MyWXBot()
