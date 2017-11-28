@@ -127,8 +127,8 @@ class MyWXBot(WXBot):
             print 'stats_plot process'
             if is_send_statsPlot() and canSend:
                 line_plot(10000)
-                self.send_img_msg_by_uid(self.get_user_id('Tobe_Lu'),'data_statis.png')
-                self.send_img_msg_by_uid(self.get_user_id('wodo2008'), 'data_statis.png')
+                self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
+                self.send_img_msg_by_uid('data_statis.png',self.get_user_id('wodo2008'))
                 self.send_img_msg_by_uid("data_statis.png", groupId)
                 canSend = False
             if not is_send_statsPlot():
@@ -157,6 +157,7 @@ class MyWXBot(WXBot):
         for user in toUserSet:
             print 'send user:',user,qrPath % user
             self.send_msg(user,msgtext)
+            self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
             self.send_img_msg(user,qrPath % user)
             self.send_msg(u'wodo2008',msgtext)
             self.send_img_msg(u'wodo2008', qrPath % user)
