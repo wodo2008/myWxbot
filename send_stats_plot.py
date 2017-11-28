@@ -8,14 +8,14 @@ import time
 from datastatis_ploty import line_plot
 import json
 import threading
-#import redis
+import redis
 
-# def init_redis(host,port,db,password=None):
-#     if password :
-#         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
-#     else:
-#         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db))
-#     return redis.Redis(connection_pool=pool)
+def init_redis(host,port,db,password=None):
+    if password :
+        pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
+    else:
+        pool = redis.ConnectionPool(host=host,port=int(port),db=int(db))
+    return redis.Redis(connection_pool=pool)
 
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
