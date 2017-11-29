@@ -34,8 +34,10 @@ class MyWXBot(WXBot):
         # t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
         t1 = threading.Thread(target=self.stats_plot,args={'zhuogongshengyagongzuoshijiaoliuqun'})
         t1.start()
-        # t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
-        # t2.start()
+        t1 = threading.Thread(target=self.send_unsovled_q,args={})
+        t1.start()
+        #t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
+        #t2.start()
 
     #对于新加入的进行回应
     def group_newer_response(self,g_pinyin,msg):
@@ -123,7 +125,7 @@ class MyWXBot(WXBot):
         groupId = self.getGroupId(qunPinyin)
         print 'groupId:',groupId
         while True:
-            if is_send(['8','14']):
+            if is_send(['8']):
                 print 'stats_plot process'
                 line_plot(10000)
                 #self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
@@ -133,8 +135,8 @@ class MyWXBot(WXBot):
 
     def send_unsovled_q(self):
         while True:
-            time.sleep(3600)
-            if not is_send(['14','19']):
+            if not is_send(['12','19']):
+                time.sleep(3600)
                 return
             mgRedis = init_redis('127.0.0.1', 6379, 0)
             toUserSet = set()
@@ -155,10 +157,11 @@ class MyWXBot(WXBot):
                     toUserSet.add(toUser)
             for user in toUserSet:
                 print 'send user:',user,qrPath % user
-                # self.send_msg(self.get_user_id(user),msgtext)
-                # self.send_img_msg_by_uid(qrPath % user,self.get_user_id(user))
-                self.send_msg(u'wodo2008',msgtext)
+                self.send_msg(user,msgtext)
+                self.send_img_msg_by_uid(qrPath % user,self.get_user_id(user))
+                self.send_msg(u'wodo2008','%s:%s' % (user,msgtext))
                 self.send_img_msg_by_uid(qrPath % user,self.get_user_id(u'wodo2008'))
+            time.sleep(3600)
 
 
     def getRedis(self):
