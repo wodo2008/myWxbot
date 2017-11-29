@@ -127,7 +127,7 @@ class MyWXBot(WXBot):
         groupId = self.getGroupId(qunPinyin)
         print 'groupId:',groupId
         while True:
-            if is_send(['8']):
+            if is_send(['0']):
                 print 'stats_plot process'
                 line_plot(10000)
                 #self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
