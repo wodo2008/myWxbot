@@ -9,6 +9,7 @@ from datastatis_ploty import line_plot
 import json
 import threading
 import redis
+import sqlite3
 
 def init_redis(host,port,db,password=None):
     if password :
