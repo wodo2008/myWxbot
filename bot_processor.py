@@ -8,7 +8,8 @@ import time
 from datastatis_ploty import line_plot
 import json
 import threading
-import redis
+# import redis
+from processor.qaProcessor import QaProcessor
 import sqlite3
 
 def init_redis(host,port,db,password=None):
@@ -35,8 +36,8 @@ class MyWXBot(WXBot):
         # t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
         t1 = threading.Thread(target=self.stats_plot,args={'zhuogongshengyagongzuoshijiaoliuqun'})
         t1.start()
-        t1 = threading.Thread(target=self.send_unsovled_q,args={})
-        t1.start()
+        # t2 = threading.Thread(target=self.send_unsovled_q,args={})
+        # t2.start()
         #t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
         #t2.start()
 
@@ -135,6 +136,7 @@ class MyWXBot(WXBot):
             time.sleep(3600)
 
     def send_unsovled_q(self):
+        qaproces = QaProcessor()
         while True:
             if not is_send(['12','19']):
                 time.sleep(3600)
@@ -145,17 +147,7 @@ class MyWXBot(WXBot):
             now = time.time()
             nowstr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))
             msgtext = '亲，截至%s,您在大同学吧还有如下问题没有回答，请在近期给予答复~' % nowstr
-            while True:
-                msgStr = mgRedis.lpop('ques_grad_mq')
-                print msgStr
-                if not msgStr:
-                    #time.sleep(5)
-                    break
-                msgarr = msgStr.split('|')
-                if len(msgarr) == 2:
-                    toUser = msgarr[0]
-                    msg = msgarr[1]
-                    toUserSet.add(toUser)
+            toUserSet = qaproces.get_unsovler()
             for user in toUserSet:
                 print 'send user:',user,qrPath % user
                 self.send_msg(user,msgtext)

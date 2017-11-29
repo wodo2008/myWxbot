@@ -19,3 +19,9 @@ class QaProcessor(object):
             weixin_id = row[4]
             weixin_id_set.add(weixin_id)
         return weixin_id_set
+
+
+if __name__ == '__main__':
+    qaprocess = QaProcessor()
+    widSet = qaprocess.get_unsovler()
+    print widSet
