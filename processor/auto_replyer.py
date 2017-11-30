@@ -27,19 +27,25 @@ class Auto_replyer(object):
         self.urpItem = urpItem
         #如果没有记录或需求课程，发送课程相关介绍
         if not urpItem or (type == 0 and data == u'课程'):
+            print 'send_kecheng'
             return self.send_kecheng(userId)
         stage = urpItem['stage']
         if stage == StageDict['welcome']:
             if type == 3:
+                print 'img_process'
                 return self.img_process(msg,urpItem)
             else:
+                print 'send_ask_fromGroup'
                 return self.send_ask_fromGroup()
         if stage == StageDict['hasImg']:
             if len(data) == 11 and data.isdigit():
+                print 'phone_process'
                 return self.phone_process(data,urpItem)
             else:
+                print 'send_correct_phoneNumReq'
                 return self.send_correct_phoneNumReq()
         if stage == StageDict['registed']:
+            print 'registed'
             return ''
 
     #处理图片
@@ -86,15 +92,15 @@ class Auto_replyer(object):
 
     #到群提问的信息
     def send_ask_fromGroup(self):
-        str = '您好，由于当前小助手好友过多，如有疑惑请前往【IC交流群2|大同学吧】中进行提问，非常感谢！'
+        str = '您好，由于当前小助手好友过多，如有疑惑请前往【IC交流群2|大同学吧】中进行提问，非常感谢！[太阳]'
         return str
 
     def send_ask_phoneNum(self):
-        str = '截图已收到！请回复您之前报名的手机号，我们将为该账号开通课程特权【注意：回复内容需要为纯数字】'
+        str = '截图已收到！请回复您之前报名的手机号，我们将为该账号开通课程特权[嘿哈]【注意：回复内容需要为纯数字】'
         return str
 
     def send_correct_phoneNumReq(self):
-        str = '不好意思，您的号码输入格式有误，只要纯数字就好啦'
+        str = '不好意思，您的号码输入格式有误，只要纯数字就好啦[呲牙]'
         return str
 
     def send_wrong_phone(self):
@@ -102,6 +108,6 @@ class Auto_replyer(object):
         return str
 
     def send_success_regist(self):
-        str = '号码审核通过，明天中午12点后，您可以登陆E课网观看此课程【账号和密码均为手机号】！感谢您对于本活动的大力支持，下次活动我们再见'
+        str = '号码审核通过，明天中午12点后，您可以登陆E课网观看此课程【账号和密码均为手机号】！感谢您对于本活动的大力支持，下次活动我们再见[奸笑]'
         return str
 

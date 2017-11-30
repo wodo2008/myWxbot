@@ -26,7 +26,7 @@ def init_redis(host,port,db,password=None):
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
-        self.group_newer_response(u'ceshi',msg)
+        self.group_newer_response(u'ICjiaoliuqun2datongxueba',msg)
         self.get_send_img_members(u'ceshi',msg)
         self.auto_add_member(msg)
         self.reply_to_friends(msg)
