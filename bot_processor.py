@@ -30,9 +30,6 @@ class MyWXBot(WXBot):
         self.get_send_img_members(u'ceshi',msg)
         self.auto_add_member(msg)
         self.reply_to_friends(msg)
-
-
-
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
         #     print msg['user']['id']
         #     #self.send_msg_by_uid(u'hi', msg['user']['id'])
@@ -139,7 +136,7 @@ class MyWXBot(WXBot):
             time.sleep(100)
 
     def getGroupId(self,qunPinyin):
-        if qunPinyin in self.groupId_dict:
+        if qunPinyin in self.groupId_dict and len(self.groupId_dict[qunPinyin])>0:
             return self.groupId_dict[qunPinyin]
         groupId = ''
         print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')
