@@ -7,8 +7,10 @@ import time
 from datastatis_ploty import line_plot
 import json
 import threading
+from processor.database_layer import Database_layer
 # import redis
 from processor.qaProcessor import QaProcessor
+from processor.auto_replyer import Auto_replyer
 import sqlite3
 
 reload(sys)
@@ -23,10 +25,14 @@ def init_redis(host,port,db,password=None):
 
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
-        #print msg['user']['id']
+        print 'msg:',msg
         self.group_newer_response(u'ceshi',msg)
         self.get_send_img_members(u'ceshi',msg)
         self.auto_add_member(msg)
+        self.reply_to_friends(msg)
+
+
+
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
         #     print msg['user']['id']
         #     #self.send_msg_by_uid(u'hi', msg['user']['id'])
@@ -80,6 +86,23 @@ class MyWXBot(WXBot):
             tRedis = self.getRedis()
             #tRedis.sadd('hasImgUsers',user_id)
             tRedis.add(name)
+    #好友信息处理
+    def reply_to_friends(self,msg):
+        user_id = msg['user']['id']
+        if not self.auauto_rep:
+            self.auto_rep = Auto_replyer()
+        retData = self.auto_rep.replyByMsg(msg)
+        if isinstance(retData,str):
+            self.send_msg_by_uid(retData, user_id)
+        if isinstance(retData,dict):
+            textArr = retData['text']
+            imgArr = retData['img']
+            for t in textArr:
+                self.send_msg_by_uid(t, user_id)
+            for img in imgArr:
+                self.send_img_msg_by_uid(img, user_id)
+            self.add_friend_to_group(user_id, u'IC交流群2|大同学吧')
+
     #自动同意好友请求
     def auto_add_member(self,msg):
         if msg['msg_type_id'] == 37:

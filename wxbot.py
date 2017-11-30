@@ -101,6 +101,7 @@ class WXBot:
         self.session = SafeSession()
         self.session.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5'})
         self.conf = {'qr': 'png'}
+        self.auauto_rep = None
 
         self.my_account = {}  # 当前账户
 
