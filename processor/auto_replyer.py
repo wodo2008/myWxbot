@@ -18,6 +18,7 @@ class Auto_replyer(object):
         msg_type_id = msg.get('msg_type_id',0)
         #只接收联系人消息
         if not msg_type_id in [4,99]:
+            print '不处理信息'
             return ''
         type = msg['content']['type']
         data = msg['content']['data']
