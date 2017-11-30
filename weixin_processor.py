@@ -25,5 +25,5 @@ def get_cumulate_user(oridata):
 
 if __name__ == '__main__':
     sday = '2017-11-01'
-    eday = '2017-11-01'
+    eday = '2017-11-29'
     get_stats_data(sday,eday)

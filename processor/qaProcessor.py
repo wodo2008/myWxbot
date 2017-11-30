@@ -16,7 +16,7 @@ class QaProcessor(object):
         datas = cursor.execute(sql)
         weixin_id_set = set()
         for row in datas:
-            weixin_id = row[4]
+            weixin_id = row[0]
             weixin_id_set.add(weixin_id)
         return weixin_id_set
 

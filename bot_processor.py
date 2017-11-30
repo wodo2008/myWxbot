@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!-*-coding:utf-8-*-
 #
 
 from wxbot import *
@@ -11,6 +10,9 @@ import threading
 # import redis
 from processor.qaProcessor import QaProcessor
 import sqlite3
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def init_redis(host,port,db,password=None):
     if password :
@@ -36,8 +38,8 @@ class MyWXBot(WXBot):
         # t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
         t1 = threading.Thread(target=self.stats_plot,args={'zhuogongshengyagongzuoshijiaoliuqun'})
         t1.start()
-        # t2 = threading.Thread(target=self.send_unsovled_q,args={})
-        # t2.start()
+        t2 = threading.Thread(target=self.send_unsovled_q,args={})
+        t2.start()
         #t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
         #t2.start()
 
@@ -83,8 +85,14 @@ class MyWXBot(WXBot):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
-            self.send_msg_by_uid(u"欢迎",user_id)
-            self.add_friend_to_group(user_id,u'IC交流群|大同学吧')
+            data = json.load(open('/home/myWxbot/config.json'))
+            textArr = data['auto_txt']
+            imgArr = data['auto_msg']
+            for t in textArr:
+                 self.send_msg_by_uid(t,user_id)
+            for img in imgArr:
+                 self.send_img_msg_by_uid(img,user_id)
+            self.add_friend_to_group(user_id,u'IC交流群2|大同学吧')
 
 
     #从群中移除指定的成员
@@ -127,29 +135,31 @@ class MyWXBot(WXBot):
         groupId = self.getGroupId(qunPinyin)
         print 'groupId:',groupId
         while True:
-            if is_send(['0']):
+            if is_send([8]):
                 print 'stats_plot process'
                 line_plot(10000)
                 #self.send_img_msg_by_uid('data_statis.png',self.get_user_id('Tobe_Lu'))
                 self.send_img_msg_by_uid('data_statis.png',self.get_user_id('wodo2008'))
-                #self.send_img_msg_by_uid("data_statis.png", groupId)
+                self.send_img_msg_by_uid("data_statis.png", groupId)
             time.sleep(3600)
 
     def send_unsovled_q(self):
         qaproces = QaProcessor()
         while True:
-            if not is_send(['12','19']):
+            if not is_send([9,20]):
                 time.sleep(3600)
                 return
-            mgRedis = init_redis('127.0.0.1', 6379, 0)
             toUserSet = set()
             qrPath = 'grad_qrs/%s.jpg'
             now = time.time()
             nowstr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))
             msgtext = '亲，截至%s,您在大同学吧还有如下问题没有回答，请在近期给予答复~' % nowstr
             toUserSet = qaproces.get_unsovler()
+            print 'toUserSet:',toUserSet
             for user in toUserSet:
                 print 'send user:',user,qrPath % user
+                if not os.path.exists(qrPath % user):
+                    continue
                 self.send_msg(user,msgtext)
                 self.send_img_msg_by_uid(qrPath % user,self.get_user_id(user))
                 self.send_msg(u'wodo2008','%s:%s' % (user,msgtext))
@@ -170,7 +180,7 @@ def is_send(hourArr):
     if not isinstance(hourArr,list):
         return False
     now = time.time()
-    hour = str(time.strftime('%H',time.localtime(now)))
+    hour = int(time.strftime('%H',time.localtime(now)))
     if hour in hourArr:
         return True
     return False
