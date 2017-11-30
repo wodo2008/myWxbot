@@ -51,7 +51,7 @@ class MyWXBot(WXBot):
 
     #对于新加入的进行回应
     def group_newer_response(self,g_pinyin,msg):
-        print msg
+        print 'group_newer_response:',msg
         if msg['user']['name'] == 'self':
             ori_group_id = msg['to_user_id']
         else:
@@ -66,6 +66,7 @@ class MyWXBot(WXBot):
             result1 = group_invit_1.findall(msg['content']['data'])
             result2 = group_invit_2.findall(msg['content']['data'])
             result = result1 if len(result1) > 0 else result2
+            print result1,result2,result
             if len(result) <= 0:
                 return
             send_msg = '@%s欢迎加入' % (result[0][1])
