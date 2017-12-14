@@ -15,39 +15,39 @@ class Auto_replyer(object):
 
     #根据接收的消息返回对应的消息
     def replyByMsg(self,msg):
-        msg_type_id = msg.get('msg_type_id',0)
-        #只接收联系人消息
-        if not msg_type_id in [4,99]:
-            print '不处理信息'
-            return ''
-        type = msg['content']['type']
         data = msg['content']['data']
         userId = msg['user']['id']
         query = {'userId': userId}
         urpItem = self.dl.get_urp_Item(query)
-        self.urpItem = urpItem
-        #如果没有记录或需求课程，发送课程相关介绍
-        if not urpItem or (type == 0 and data == u'课程'):
-            print 'send_kecheng'
-            return self.send_kecheng(userId)
         stage = urpItem['stage']
-        if stage == StageDict['welcome']:
-            if type == 3:
-                print 'img_process'
-                return self.img_process(msg,urpItem)
-            else:
-                print 'send_ask_fromGroup'
-                return self.send_ask_fromGroup()
-        if stage == StageDict['hasImg']:
-            if len(data) == 11 and data.isdigit():
-                print 'phone_process'
-                return self.phone_process(data,urpItem)
-            else:
-                print 'send_correct_phoneNumReq'
-                return self.send_correct_phoneNumReq()
         if stage == StageDict['registed']:
             print 'registed'
             return ''
+        if len(data) == 11 and data.isdigit():
+            print 'phone_process'
+            return self.phone_process(data, urpItem)
+        else:
+            print 'send_correct_phoneNumReq'
+            return self.send_correct_phoneNumReq()
+
+    def get_send_img_members(self, qunPinyin, msg):
+        if msg['user']['name'] == 'self':
+            ori_group_id = msg['to_user_id']
+        else:
+            ori_group_id = msg['user']['id']
+        if not ori_group_id == self.getGroupId(qunPinyin):
+            print 'need:%s,this is %s' % (self.getGroupId(qunPinyin), ori_group_id)
+            return
+        if msg['msg_type_id'] == 3 and msg['content']['type'] == 3:
+            name = msg['content']['user']['name']
+            print '%s has send Img' % name
+            query = {'userId': name}
+            urpItem = self.dl.get_urp_Item(query)
+            if not urpItem:
+                urpItem = {}
+            
+
+
 
     #处理图片
     def img_process(self,msg,urpItem):
