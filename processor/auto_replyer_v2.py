@@ -19,15 +19,11 @@ class Auto_replyer(object):
         userId = msg['user']['id']
         query = {'userId': userId}
         urpItem = self.dl.get_urp_Item(query)
-        stage = urpItem['stage']
-        qunPinyin = ''
-        if stage == StageDict['registed']:
+        if urpItem and urpItem['stage'] == StageDict['registed']:
             print 'registed'
             return ''
         if msg['msg_type_id'] == 4:
             self.phone_process(urpItem,msg)
-        if msg['msg_type_id'] == 3 and msg['content']['type'] == 3:
-            self.get_send_img_members(qunPinyin, msg)
 
 
     def get_send_img_members(self, qunPinyin, msg):
