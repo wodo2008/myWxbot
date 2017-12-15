@@ -18,9 +18,9 @@ class Auto_replyer(object):
 
     #根据接收的消息返回对应的消息
     def replyByMsg(self,msg):
-        data = msg['content']['data']
-        if data == '课程':
-            return replyMsg['auto_add']
+        # data = msg['content']['data']
+        # if data == '课程':
+        #     return replyMsg['auto_add']
         if msg['msg_type_id'] in [99,4]:
             return self.phone_process(msg)
 

@@ -26,7 +26,7 @@ sys.setdefaultencoding('utf8')
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
-        self.send_kecheng_v2(msg,'IC交流群3大同学吧')
+        self.send_kecheng_v2(msg,'乐乐乐')
 
         #self.get_fixFriendMsg('大同学吧小助手',msg)
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
@@ -42,7 +42,7 @@ class MyWXBot(WXBot):
         # t1.start()
         # t2 = threading.Thread(target=self.send_unsovled_q,args={})
         # t2.start()
-        t3 = threading.Thread(target=self.send_msg_to_group,args=('IC交流群3大同学吧',))
+        t3 = threading.Thread(target=self.send_msg_to_group,args=('乐乐乐',))
         t3.start()
 
     def send_kecheng_v2(self,msg,qunName):
@@ -106,9 +106,13 @@ class MyWXBot(WXBot):
         if not self.auauto_rep:
             self.auto_rep = Auto_replyer()
         retData = self.auto_rep.replyByMsg(msg)
-        if isinstance(retData,str):
+        data = msg['content']['data']
+        if data == '课程':
+            self.send_msg_by_uid(replyMsg['auto_add'], user_id)
+            self.add_friend_to_group(user_id, qunName)
+        elif isinstance(retData,str):
             self.send_msg_by_uid(retData, user_id)
-        if isinstance(retData,dict):
+        elif isinstance(retData,dict):
             textArr = retData['text']
             imgArr = retData['img']
             for t in textArr:
