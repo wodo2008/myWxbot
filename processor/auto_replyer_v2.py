@@ -47,7 +47,13 @@ class Auto_replyer(object):
         self.img_process(urpItem)
             
     #处理图片
-    def img_process(self,urpItem):
+    def img_process(self,msg):
+        name = msg['content']['user']['name']
+        print '%s has send Img' % name
+        query = {'userId': name}
+        urpItem = self.dl.get_urp_Item(query)
+        if not urpItem:
+            urpItem = {'userId': name}
         urpItem['sengImg'] = True
         self.dl.save_urp_Item(urpItem)
         return
