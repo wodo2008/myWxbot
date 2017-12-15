@@ -127,7 +127,7 @@ class MyWXBot(WXBot):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
-            textArr = [replyMsg.replyMsg['auto_add']]
+            textArr = [replyMsg['auto_add']]
             if not self.auauto_rep:
                 self.auto_rep = Auto_replyer()
             # retData = self.auto_rep.replyByMsg(msg)
