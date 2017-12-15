@@ -177,8 +177,8 @@ class MyWXBot(WXBot):
         if NickName in self.groupId_dict and len(self.groupId_dict[NickName])>0:
             return self.groupId_dict[NickName]
         groupId = ''
-        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\group_list.json')
-        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\group_list.json')))
+        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')
+        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')))
         # print 'group_list:',group_list
         for group in group_list:
             # print 'group:',group
