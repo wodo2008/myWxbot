@@ -894,7 +894,7 @@ class WXBot:
             if user['UserName'] == uid:
                 #已经在群里面了,不用加了
                 return True
-        if group_num<=100:
+        if group_num<=40:
             url = self.base_uri + '/webwxupdatechatroom?fun=addmember&pass_ticket=%s' % self.pass_ticket
             params ={
                 "AddMemberList": uid,
