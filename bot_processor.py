@@ -10,28 +10,28 @@ import threading
 from processor.database_layer import Database_layer
 # import redis
 from processor.qaProcessor import QaProcessor
-from processor.auto_replyer import Auto_replyer
+from processor.auto_replyer_v2 import Auto_replyer
 import sqlite3
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-def init_redis(host,port,db,password=None):
-    if password :
-        pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
-    else:
-        pool = redis.ConnectionPool(host=host,port=int(port),db=int(db))
-    return redis.Redis(connection_pool=pool)
+# def init_redis(host,port,db,password=None):
+#     if password :
+#         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
+#     else:
+#         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db))
+#     return redis.Redis(connection_pool=pool)
 
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
-        self.group_newer_response('ASIC System课程赠送群1|大同学吧',msg)
-        self.group_newer_response('ASIC System课程赠送群2|大同学吧',msg)
+        self.group_newer_response('测试',msg)
         #self.get_send_img_members(u'ceshi',msg)
-        self.auto_add_member(msg)
+        self.auto_add_member_sendMsg(msg,'测试1')
         self.reply_to_friends(msg)
-        self.get_fixFriendMsg('大同学吧小助手',msg)
+
+        #self.get_fixFriendMsg('大同学吧小助手',msg)
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
         #     print msg['user']['id']
         #     #self.send_msg_by_uid(u'hi', msg['user']['id'])
@@ -41,12 +41,12 @@ class MyWXBot(WXBot):
 
     def schedule(self):
         # t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
-        t1 = threading.Thread(target=self.stats_plot,args={'卓工生涯工作室交流群'})
-        t1.start()
-        t2 = threading.Thread(target=self.send_unsovled_q,args={})
-        t2.start()
-        #t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
-        #t2.start()
+        # t1 = threading.Thread(target=self.stats_plot,args={'卓工生涯工作室交流群'})
+        # t1.start()
+        # t2 = threading.Thread(target=self.send_unsovled_q,args={})
+        # t2.start()
+        t3 = threading.Thread(target=self.send_msg_to_group,args=('测试',))
+        t3.start()
 
     def get_fixFriendMsg(self,friend,msg):
         fromFriend = msg.get('user',{}).get('name','')
@@ -117,7 +117,7 @@ class MyWXBot(WXBot):
             self.add_friend_to_group(user_id, qunName)
 
     #自动同意好友请求并发信息
-    def auto_add_member_sendMsg(self,msg):
+    def auto_add_member_sendMsg(self,msg,qunName):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']

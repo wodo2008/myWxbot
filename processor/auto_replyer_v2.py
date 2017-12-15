@@ -20,15 +20,15 @@ class Auto_replyer(object):
         query = {'userId': userId}
         urpItem = self.dl.get_urp_Item(query)
         stage = urpItem['stage']
+        qunPinyin = ''
         if stage == StageDict['registed']:
             print 'registed'
             return ''
-        if len(data) == 11 and data.isdigit():
-            print 'phone_process'
-            return self.phone_process(data, urpItem)
-        else:
-            print 'send_correct_phoneNumReq'
-            return self.send_correct_phoneNumReq()
+        if msg['msg_type_id'] == 4:
+            self.phone_process(urpItem,msg)
+        if msg['msg_type_id'] == 3 and msg['content']['type'] == 3:
+            self.get_send_img_members(qunPinyin, msg)
+
 
     def get_send_img_members(self, qunPinyin, msg):
         if msg['user']['name'] == 'self':
@@ -38,22 +38,19 @@ class Auto_replyer(object):
         if not ori_group_id == self.getGroupId(qunPinyin):
             print 'need:%s,this is %s' % (self.getGroupId(qunPinyin), ori_group_id)
             return
-        if msg['msg_type_id'] == 3 and msg['content']['type'] == 3:
-            name = msg['content']['user']['name']
-            print '%s has send Img' % name
-            query = {'userId': name}
-            urpItem = self.dl.get_urp_Item(query)
-            if not urpItem:
-                urpItem = {}
+        name = msg['content']['user']['name']
+        print '%s has send Img' % name
+        query = {'userId': name}
+        urpItem = self.dl.get_urp_Item(query)
+        if not urpItem:
+            urpItem = {'userId': name}
+        self.img_process(urpItem)
             
-
-
-
     #处理图片
-    def img_process(self,msg,urpItem):
-        urpItem['stage'] = StageDict['hasImg']
+    def img_process(self,urpItem):
+        urpItem['sengImg'] = True
         self.dl.save_urp_Item(urpItem)
-        return self.send_ask_phoneNum()
+        return
 
     #处理文字
     def text_process(self,msg):
@@ -61,16 +58,32 @@ class Auto_replyer(object):
         pass
 
     #处理电话号码
-    def phone_process(self,phone,urpItem):
-        query = {'phoneNum':phone}
-        uicItem = self.dl.get_uic_Item(query)
-        if not uicItem:
-            return self.send_wrong_phone()
-        uicItem['hasRight'] = True
-        self.dl.save_uic_Item(uicItem)
-        urpItem['stage'] = StageDict['registed']
-        self.dl.save_urp_Item(urpItem)
-        return self.send_success_regist()
+    def phone_process(self,urpItem,msg):
+        data = msg['content']['data']
+        if len(data) == 11 and data.isdigit():
+            query = {'phoneNum':data}
+            uicItem = self.dl.get_uic_Item(query)
+            if not uicItem:
+                return self.send_wrong_phone()
+            uicItem['sendPhone'] = True
+            self.dl.save_uic_Item(uicItem)
+            urpItem['sendPhone'] = True
+            self.dl.save_urp_Item(urpItem)
+            print 'phone_process'
+            return self.send_success_regist()
+        else:
+            print 'send_correct_phoneNumReq'
+            return self.send_correct_phoneNumReq()
+
+    def newerAdd(self,msg):
+        username = msg['data']
+        query = {'username':username}
+        urpItem = self.dl.get_urp_Item(query)
+        if not urpItem:
+            urpItem = {'username':username}
+            self.dl.save_urp_Item(urpItem)
+        return
+
 
 
     def send_kecheng(self,userId):
