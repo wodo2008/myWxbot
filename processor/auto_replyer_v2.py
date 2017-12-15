@@ -15,15 +15,8 @@ class Auto_replyer(object):
 
     #根据接收的消息返回对应的消息
     def replyByMsg(self,msg):
-        data = msg['content']['data']
-        userId = msg['user']['id']
-        query = {'userId': userId}
-        urpItem = self.dl.get_urp_Item(query)
-        if urpItem and urpItem['stage'] == StageDict['registed']:
-            print 'registed'
-            return ''
-        if msg['msg_type_id'] == 4:
-            return self.phone_process(urpItem,msg)
+        if msg['msg_type_id'] == 99:
+            return self.phone_process(msg)
 
 
     def get_send_img_members(self, qunPinyin, msg):
@@ -45,16 +38,16 @@ class Auto_replyer(object):
     #处理图片
     def img_process(self,msg):
         print 'img_process'
-        name = msg['content']['user']['name']
-        print '%s has send Img' % name
-        query = {'userId': name}
+        userId = msg['content']['user']['id']
+        print '%s has send Img' % userId
+        query = {'userId': userId}
         urpItem = self.dl.get_urp_Item(query)
         if not urpItem:
-            urpItem = {'userId': name}
+            urpItem = {'userId': userId}
         urpItem['sengImg'] = True
         print 'urpItem:',urpItem
         self.dl.save_urp_Item(urpItem)
-        return
+        return '已收到图片'
 
     #处理文字
     def text_process(self,msg):
@@ -62,16 +55,20 @@ class Auto_replyer(object):
         pass
 
     #处理电话号码
-    def phone_process(self,urpItem,msg):
+    def phone_process(self,msg):
         data = msg['content']['data']
         if len(data) == 11 and data.isdigit():
-            query = {'phoneNum':data}
-            uicItem = self.dl.get_uic_Item(query)
-            if not uicItem:
-                return self.send_wrong_phone()
-            uicItem['sendPhone'] = True
-            self.dl.save_uic_Item(uicItem)
+            # query = {'phoneNum':data}
+            # uicItem = self.dl.get_uic_Item(query)
+            # if not uicItem:
+            #     return self.send_wrong_phone()
+            userId = msg['user']['id']
+            query = {'userId': userId}
+            urpItem = self.dl.get_urp_Item(query)
+            if not urpItem:
+                urpItem = {'userId':userId}
             urpItem['sendPhone'] = True
+            urpItem['phoneNum'] = data
             self.dl.save_urp_Item(urpItem)
             print 'phone_process'
             return self.send_success_regist()
@@ -80,11 +77,11 @@ class Auto_replyer(object):
             return self.send_correct_phoneNumReq()
 
     def newerAdd(self,msg):
-        username = msg['data']
-        query = {'username':username}
+        userid = msg['user']['id']
+        query = {'username':userid}
         urpItem = self.dl.get_urp_Item(query)
         if not urpItem:
-            urpItem = {'username':username}
+            urpItem = {'userId':userid}
             self.dl.save_urp_Item(urpItem)
         return
 

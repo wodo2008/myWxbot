@@ -11,7 +11,7 @@ from processor.database_layer import Database_layer
 # import redis
 from processor.qaProcessor import QaProcessor
 from processor.auto_replyer_v2 import Auto_replyer
-import sqlite3
+import contents
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -26,10 +26,7 @@ sys.setdefaultencoding('utf8')
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
-        self.group_newer_response('测试',msg)
-        self.get_send_img_members('测试',msg)
-        self.auto_add_member_sendMsg(msg,'测试')
-        self.reply_to_friends(msg)
+        self.send_kecheng_v2(msg,'IC交流群3|打同学吧')
 
         #self.get_fixFriendMsg('大同学吧小助手',msg)
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
@@ -45,8 +42,15 @@ class MyWXBot(WXBot):
         # t1.start()
         # t2 = threading.Thread(target=self.send_unsovled_q,args={})
         # t2.start()
-        t3 = threading.Thread(target=self.send_msg_to_group,args=('测试',))
+        t3 = threading.Thread(target=self.send_msg_to_group,args=('IC交流群3|打同学吧',))
         t3.start()
+
+    def send_kecheng_v2(self,msg,qunName):
+        self.group_newer_response(qunName, msg,'')
+        self.get_send_img_members(qunName, msg)
+        self.auto_add_member_sendMsg(qunName,msg)
+        self.reply_to_friends(qunName,msg)
+
 
     def get_fixFriendMsg(self,friend,msg):
         fromFriend = msg.get('user',{}).get('name','')
@@ -54,13 +58,13 @@ class MyWXBot(WXBot):
             self.paramDict['qunName'] = msg.get('content',{}).get('data','')
 
     #对于新加入的进行回应
-    def group_newer_response(self,g_pinyin,msg):
+    def group_newer_response(self,g_pinyin,msg,welWord):
         print 'group_newer_response'
         if msg['user']['name'] == 'self':
             ori_group_id = msg['to_user_id']
         else:
             ori_group_id = msg['user']['id']
-        #print 'g_pinyin:',g_pinyin
+        print 'g_pinyin:',g_pinyin
         print self.getGroupId(g_pinyin),ori_group_id
         if not ori_group_id == self.getGroupId(g_pinyin):
             print 'need:%s,this is %s' % (self.getGroupId(g_pinyin),ori_group_id)
@@ -75,8 +79,8 @@ class MyWXBot(WXBot):
             #print result1,result2,result
             if len(result) <= 0:
                 return
-            send_msg = '@%s欢迎加入' % (eval(result[0][1]))
-            self.send_msg_by_uid(send_msg,msg['user']['id'])
+            # send_msg = '@%s,%s' % (eval(result[0][1]),welWord)
+            #self.send_msg_by_uid(send_msg,msg['user']['id'])
             self.has_newer = True
 
     #获取发送图片的成员
@@ -93,11 +97,11 @@ class MyWXBot(WXBot):
             print '%s has send Img' % name
             if not self.auauto_rep:
                 self.auto_rep = Auto_replyer()
-            self.auto_rep.img_process(msg)
+            ret = self.auto_rep.img_process(msg)
+            self.send_msg_by_uid(ret, msg['user']['id'])
 
     #好友信息处理
-    def reply_to_friends(self,msg):
-        qunName = '测试'
+    def reply_to_friends(self,qunName,msg):
         user_id = msg['user']['id']
         if not self.auauto_rep:
             self.auto_rep = Auto_replyer()
@@ -115,15 +119,14 @@ class MyWXBot(WXBot):
             self.add_friend_to_group(user_id, qunName)
 
     #自动同意好友请求并发信息
-    def auto_add_member_sendMsg(self,msg,qunName):
+    def auto_add_member_sendMsg(self,qunName,msg):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
-            #data = json.load(open('/home/myWxbot/config.json'))
-            data={}
-            data['auto_txt'] = ['欢迎']
-            data['auto_msg'] = []
-            textArr = data['auto_txt']
+            textArr = [contents.replyMsg['auto_add']]
+            if not self.auauto_rep:
+                self.auto_rep = Auto_replyer()
+            retData = self.auto_rep.newerAdd(msg)
             for t in textArr:
                  self.send_msg_by_uid(t,user_id)
             print 'qunName:',qunName
@@ -142,7 +145,7 @@ class MyWXBot(WXBot):
             group_members = all_group_members[gid]
             for gm in group_members:
                 NickName = gm['NickName']
-                if NickName in [u'Jason L']:
+                if NickName in ['Jason L']:
                     continue
                 if NickName not in has_Img_users:
                     print u'%s NO IMG，REMOVE!' % NickName
@@ -152,28 +155,29 @@ class MyWXBot(WXBot):
     #定时向群发通知
     def send_msg_to_group(self,groupname):
         groupId = self.getGroupId(groupname)
-        send_msg = ''
+        send_msg = contents.replyMsg['group_welWord']
         while True:
+            print 'has newer:',self.has_newer
             if self.has_newer:
                 self.send_msg_by_uid(send_msg, groupId)
                 self.has_newer = False
-            time.sleep(2*60)
+            time.sleep(60)
 
     def getGroupId(self,NickName):
         if NickName in self.groupId_dict and len(self.groupId_dict[NickName])>0:
             return self.groupId_dict[NickName]
         groupId = ''
-        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')
-        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')))
+        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\group_list.json')
+        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\group_list.json')))
         # print 'group_list:',group_list
         for group in group_list:
             # print 'group:',group
-            NickName= group['NickName']
-
+            TNickName= group['NickName']
             UserName = group['UserName']
-            if NickName == NickName:
+            if TNickName == NickName:
                 groupId = UserName
                 break
+        print NickName,'is:',groupId
         self.groupId_dict[NickName] = groupId
         return groupId
 
