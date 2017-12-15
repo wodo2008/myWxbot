@@ -23,11 +23,16 @@ def line_plot(target_num):
         thisday = time.strftime('%Y-%m-%d',
                                 time.localtime(time.mktime(time.strptime(str(first_day),
                                                                          '%Y-%m-%d')) + i * 24 * 3600))
-        if str(thisday) >= time.strftime('%Y-%m-%d', time.localtime(now)):
+        print thisday
+        if time.strftime('%Y-%m-%d',time.localtime(time.time())) == thisday:
             break
+        stat_data = get_stats_data(thisday, thisday)
+        if stat_data == -1:
+            break
+        #print thisday
         dx.append(thisday)
         dy1.append(int(A * (i + 1) + B))
-        dy2.append(get_stats_data(thisday, thisday))
+        dy2.append(stat_data)
     trace1 = {'x': dx, 'y': dy1, 'mode': 'lines','name':'预期增粉'}
     trace2 = {'x': dx, 'y': dy2, 'mode': 'lines','name':'实际增粉'}
     annotations = []
@@ -50,7 +55,7 @@ def line_plot(target_num):
     data.append(trace1)
     data.append(trace2)
     fig = {'data': data,'layout':layout}
-    py.image.save_as(fig, 'data_statis.png', scale=3)
+    py.image.save_as(fig, '/home/myWxbot/data_statis.png', scale=3)
 
 def get_annotation(y,color):
     return dict(xref='paper', x=1, y=y[-1],
@@ -71,4 +76,4 @@ def get_legend():
     )
 
 if __name__ == '__main__':
-    line_plot(10000)
+    line_plot(30000)
