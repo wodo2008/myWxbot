@@ -11,7 +11,7 @@ from processor.database_layer import Database_layer
 # import redis
 from processor.qaProcessor import QaProcessor
 from processor.auto_replyer_v2 import Auto_replyer
-import contents
+from contents import replyMsg
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -123,10 +123,10 @@ class MyWXBot(WXBot):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
-            textArr = [contents.replyMsg['auto_add']]
+            textArr = [replyMsg.replyMsg['auto_add']]
             if not self.auauto_rep:
                 self.auto_rep = Auto_replyer()
-            retData = self.auto_rep.newerAdd(msg)
+            retData = self.auto_rep.replyByMsg(msg)
             for t in textArr:
                  self.send_msg_by_uid(t,user_id)
             print 'qunName:',qunName
@@ -155,11 +155,17 @@ class MyWXBot(WXBot):
     #定时向群发通知
     def send_msg_to_group(self,groupname):
         groupId = self.getGroupId(groupname)
-        send_msg = contents.replyMsg['group_welWord']
+        send_msg = replyMsg['group_welWord']
         while True:
             print 'has newer:',self.has_newer
             if self.has_newer:
-                self.send_msg_by_uid(send_msg, groupId)
+                textArr = replyMsg['auto_txt']
+                imgArr = replyMsg['auto_msg']
+                for t in textArr:
+                    self.send_msg_by_uid(t, groupId)
+                for img in imgArr:
+                    self.send_img_msg_by_uid(img, groupId)
+                # self.send_msg_by_uid(send_msg, groupId)
                 self.has_newer = False
             time.sleep(60)
 

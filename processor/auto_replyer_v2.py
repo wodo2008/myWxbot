@@ -2,6 +2,9 @@
 
 from database_layer import Database_layer
 from AutoReplyDict import StageDict
+import sys
+sys.path.append('../')
+from contents import replyMsg
 import time
 import json
 
@@ -15,6 +18,9 @@ class Auto_replyer(object):
 
     #根据接收的消息返回对应的消息
     def replyByMsg(self,msg):
+        data = msg['content']['data']
+        if data == '课程':
+            return replyMsg['auto_add']
         if msg['msg_type_id'] == 99:
             return self.phone_process(msg)
 
@@ -123,6 +129,7 @@ class Auto_replyer(object):
         return str
 
     def send_success_regist(self):
-        str = '号码审核通过，明天中午12点后，您可以登陆E课网观看此课程【新用户账号和密码均为手机号。老用户用户名为手机号，密码不变】！感谢您对于本活动的大力支持，下次活动我们再见[奸笑]'
+        # str = '号码审核通过，明天中午12点后，您可以登陆E课网观看此课程【新用户账号和密码均为手机号。老用户用户名为手机号，密码不变】！感谢您对于本活动的大力支持，下次活动我们再见[奸笑]'
+        str = '号码已收到，我们将会为您开通E课网账号（日后会有更多免费课程领取活动），本次课程领取方式详见【IC交流群3|大同学吧】'
         return str
 
