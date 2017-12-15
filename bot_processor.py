@@ -77,6 +77,7 @@ class MyWXBot(WXBot):
                 return
             send_msg = '@%s欢迎加入' % (eval(result[0][1]))
             self.send_msg_by_uid(send_msg,msg['user']['id'])
+            self.has_newer = True
 
     #获取发送图片的成员
     def get_send_img_members(self,qunPinyin,msg):
@@ -115,12 +116,8 @@ class MyWXBot(WXBot):
             print 'qunName:',qunName
             self.add_friend_to_group(user_id, qunName)
 
-    #自动同意好友请求
-    def auto_add_member(self,msg):
-        print 'auto_add_member'
-        qunName = self.paramDict.get('qunName','')
-        if qunName == '':
-            qunName = 'ASIC System课程赠送群1|大同学吧'
+    #自动同意好友请求并发信息
+    def auto_add_member_sendMsg(self,msg):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
@@ -157,6 +154,16 @@ class MyWXBot(WXBot):
                     self.delete_user_from_group(NickName,gid)
             time.sleep(100)
 
+    #定时向群发通知
+    def send_msg_to_group(self,groupname):
+        groupId = self.getGroupId(groupname)
+        send_msg = ''
+        while True:
+            if self.has_newer:
+                self.send_msg_by_uid(send_msg, groupId)
+                self.has_newer = False
+            time.sleep(2*60)
+
     def getGroupId(self,NickName):
         if NickName in self.groupId_dict and len(self.groupId_dict[NickName])>0:
             return self.groupId_dict[NickName]
@@ -167,6 +174,7 @@ class MyWXBot(WXBot):
         for group in group_list:
             # print 'group:',group
             NickName= group['NickName']
+
             UserName = group['UserName']
             if NickName == NickName:
                 groupId = UserName
@@ -209,7 +217,6 @@ class MyWXBot(WXBot):
                 self.send_msg(u'wodo2008','%s:%s' % (user,msgtext))
                 self.send_img_msg_by_uid(qrPath % user,self.get_user_id(u'wodo2008'))
             time.sleep(3600)
-
 
     def getRedis(self):
         if self.redis == None:
