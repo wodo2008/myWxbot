@@ -1,14 +1,13 @@
 #!-*-coding:utf-8-*-
 
-# import pymongo
+import pymongo
 
 class Database_layer(object):
     def __init__(self,conf):
         mongo_host = conf['mongo']['host']
-        # mongo_conn = pymongo.MongoClient(mongo_host)
-        # self.user_identi_code = mongo_conn.eke.user_identi_code
-        # self.user_res_process = mongo_conn.eke.user_res_process
-        pass
+        mongo_conn = pymongo.MongoClient(mongo_host)
+        self.user_identi_code = mongo_conn.eke.user_identi_code
+        self.user_res_process = mongo_conn.eke.user_res_process
 
     def get_uic_Item(self,query):
         print 'get_uic_Item'

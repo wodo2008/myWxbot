@@ -126,7 +126,7 @@ class MyWXBot(WXBot):
             textArr = [replyMsg.replyMsg['auto_add']]
             if not self.auauto_rep:
                 self.auto_rep = Auto_replyer()
-            retData = self.auto_rep.replyByMsg(msg)
+            # retData = self.auto_rep.replyByMsg(msg)
             for t in textArr:
                  self.send_msg_by_uid(t,user_id)
             print 'qunName:',qunName

@@ -1,6 +1,6 @@
 #!-*-coding:utf-8-*-
 
-from database_layer import Database_layer
+from database_layer_v2 import Database_layer
 from AutoReplyDict import StageDict
 import sys
 sys.path.append('../')
@@ -78,9 +78,9 @@ class Auto_replyer(object):
             self.dl.save_urp_Item(urpItem)
             print 'phone_process'
             return self.send_success_regist()
-        else:
-            print 'send_correct_phoneNumReq'
-            return self.send_correct_phoneNumReq()
+        # else:
+        #     print 'send_correct_phoneNumReq'
+        #     return self.send_correct_phoneNumReq()
 
     def newerAdd(self,msg):
         userid = msg['user']['id']
