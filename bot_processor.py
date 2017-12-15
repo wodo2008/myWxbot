@@ -27,8 +27,8 @@ class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
         self.group_newer_response('测试',msg)
-        self.get_send_img_members(u'ceshi',msg)
-        self.auto_add_member_sendMsg(msg,'测试1')
+        self.get_send_img_members('测试',msg)
+        self.auto_add_member_sendMsg(msg,'测试')
         self.reply_to_friends(msg)
 
         #self.get_fixFriendMsg('大同学吧小助手',msg)
@@ -124,10 +124,8 @@ class MyWXBot(WXBot):
             data['auto_txt'] = ['欢迎']
             data['auto_msg'] = []
             textArr = data['auto_txt']
-            imgArr = data['auto_msg']
             for t in textArr:
                  self.send_msg_by_uid(t,user_id)
-
             print 'qunName:',qunName
             self.add_friend_to_group(user_id,qunName)
 

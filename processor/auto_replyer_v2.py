@@ -23,7 +23,7 @@ class Auto_replyer(object):
             print 'registed'
             return ''
         if msg['msg_type_id'] == 4:
-            self.phone_process(urpItem,msg)
+            return self.phone_process(urpItem,msg)
 
 
     def get_send_img_members(self, qunPinyin, msg):
@@ -44,6 +44,7 @@ class Auto_replyer(object):
             
     #处理图片
     def img_process(self,msg):
+        print 'img_process'
         name = msg['content']['user']['name']
         print '%s has send Img' % name
         query = {'userId': name}
@@ -51,6 +52,7 @@ class Auto_replyer(object):
         if not urpItem:
             urpItem = {'userId': name}
         urpItem['sengImg'] = True
+        print 'urpItem:',urpItem
         self.dl.save_urp_Item(urpItem)
         return
 
