@@ -97,9 +97,7 @@ class MyWXBot(WXBot):
 
     #好友信息处理
     def reply_to_friends(self,msg):
-        qunName = self.paramDict.get('qunName','')
-        if qunName == '':
-            qunName = 'ASIC System课程赠送群1|大同学吧'
+        qunName = '测试'
         user_id = msg['user']['id']
         if not self.auauto_rep:
             self.auto_rep = Auto_replyer()
