@@ -82,7 +82,12 @@ class Auto_replyer(object):
             urp['timeStmp'] = time.time()
             urp['stage'] = StageDict['welcome']
             self.dl.save_urp_Item(urp)
-        data = json.load(open('/home/myWxbot/config.json'))
+        # data = json.load(open('/home/myWxbot/config.json'))
+        data={}
+        data['auto_txt'] = []
+        data['auto_msg'] = []
+        textArr = data['auto_txt']
+        imgArr = data['auto_msg']
         textArr = data['auto_txt']
         imgArr = data['auto_msg']
         retData = {}
@@ -109,6 +114,6 @@ class Auto_replyer(object):
         return str
 
     def send_success_regist(self):
-        str = '号码审核通过，明天中午12点后，您可以登陆E课网观看此课程【新用户账号和密码均为手机号。老用户用户名为手机号，密码不变】！感谢您对于本活动的大力支持，下次活动我们再见[奸笑]'
+        str = '号码审核通过，明天中午12点后，您可以登陆E课网（www.eecourse.com）观看此课程【新用户账号和密码均为手机号。老用户（已经有账号）用户名为手机号，密码不变】！感谢您对于本活动的大力支持，下次活动我们再见[奸笑]'
         return str
 

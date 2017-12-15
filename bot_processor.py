@@ -26,10 +26,12 @@ def init_redis(host,port,db,password=None):
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
-        self.group_newer_response('ICjiaoliuqun2datongxueba',msg)
+        self.group_newer_response('ASIC System课程赠送群1|大同学吧',msg)
+        self.group_newer_response('ASIC System课程赠送群2|大同学吧',msg)
         #self.get_send_img_members(u'ceshi',msg)
         self.auto_add_member(msg)
         self.reply_to_friends(msg)
+        self.get_fixFriendMsg('大同学吧小助手',msg)
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
         #     print msg['user']['id']
         #     #self.send_msg_by_uid(u'hi', msg['user']['id'])
@@ -39,12 +41,17 @@ class MyWXBot(WXBot):
 
     def schedule(self):
         # t1 = threading.Thread(target=self.stats_plot,args=('ceshi',))
-        t1 = threading.Thread(target=self.stats_plot,args={'zhuogongshengyagongzuoshijiaoliuqun'})
+        t1 = threading.Thread(target=self.stats_plot,args={'卓工生涯工作室交流群'})
         t1.start()
         t2 = threading.Thread(target=self.send_unsovled_q,args={})
         t2.start()
         #t2 = threading.Thread(target=self.remove_members_fromGroup,args=('ceshi',))
         #t2.start()
+
+    def get_fixFriendMsg(self,friend,msg):
+        fromFriend = msg.get('user',{}).get('name','')
+        if friend == fromFriend:
+            self.paramDict['qunName'] = msg.get('content',{}).get('data','')
 
     #对于新加入的进行回应
     def group_newer_response(self,g_pinyin,msg):
@@ -86,8 +93,12 @@ class MyWXBot(WXBot):
             tRedis = self.getRedis()
             #tRedis.sadd('hasImgUsers',user_id)
             tRedis.add(name)
+
     #好友信息处理
     def reply_to_friends(self,msg):
+        qunName = self.paramDict.get('qunName','')
+        if qunName == '':
+            qunName = 'ASIC System课程赠送群1|大同学吧'
         user_id = msg['user']['id']
         if not self.auauto_rep:
             self.auto_rep = Auto_replyer()
@@ -101,21 +112,30 @@ class MyWXBot(WXBot):
                 self.send_msg_by_uid(t, user_id)
             for img in imgArr:
                 self.send_img_msg_by_uid(img, user_id)
-            self.add_friend_to_group(user_id, u'IC交流群2|大同学吧')
+            print 'qunName:',qunName
+            self.add_friend_to_group(user_id, qunName)
 
     #自动同意好友请求
     def auto_add_member(self,msg):
+        print 'auto_add_member'
+        qunName = self.paramDict.get('qunName','')
+        if qunName == '':
+            qunName = 'ASIC System课程赠送群1|大同学吧'
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
-            data = json.load(open('/home/myWxbot/config.json'))
+            #data = json.load(open('/home/myWxbot/config.json'))
+            data={}
+            data['auto_txt'] = []
+            data['auto_msg'] = []
             textArr = data['auto_txt']
             imgArr = data['auto_msg']
             for t in textArr:
                  self.send_msg_by_uid(t,user_id)
             for img in imgArr:
                  self.send_img_msg_by_uid(img,user_id)
-            self.add_friend_to_group(user_id,u'IC交流群2|大同学吧')
+            print 'qunName:',qunName
+            self.add_friend_to_group(user_id,qunName)
 
 
     #从群中移除指定的成员
@@ -137,21 +157,21 @@ class MyWXBot(WXBot):
                     self.delete_user_from_group(NickName,gid)
             time.sleep(100)
 
-    def getGroupId(self,qunPinyin):
-        if qunPinyin in self.groupId_dict and len(self.groupId_dict[qunPinyin])>0:
-            return self.groupId_dict[qunPinyin]
+    def getGroupId(self,NickName):
+        if NickName in self.groupId_dict and len(self.groupId_dict[NickName])>0:
+            return self.groupId_dict[NickName]
         groupId = ''
         print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')
         group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')))
-        print 'group_list:',group_list
+        # print 'group_list:',group_list
         for group in group_list:
-            print 'group:',group
-            PYQuanPin= group['PYQuanPin']
+            # print 'group:',group
+            NickName= group['NickName']
             UserName = group['UserName']
-            if PYQuanPin == qunPinyin:
+            if NickName == NickName:
                 groupId = UserName
                 break
-        self.groupId_dict[qunPinyin] = groupId
+        self.groupId_dict[NickName] = groupId
         return groupId
 
     def stats_plot(self,qunPinyin):
