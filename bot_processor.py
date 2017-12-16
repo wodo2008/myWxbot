@@ -99,7 +99,7 @@ class MyWXBot(WXBot):
             if not self.auauto_rep:
                 self.auto_rep = Auto_replyer()
             ret = self.auto_rep.img_process(msg)
-            self.send_msg_by_uid(ret, msg['user']['id'])
+            self.send_msg_by_uid(ret, ori_group_id)
 
     #好友信息处理
     def reply_to_friends(self,qunName,msg):
