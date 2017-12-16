@@ -21,6 +21,8 @@ def get_stats_data(sday,eday):
 
 
 def get_cumulate_user(oridata):
+    if len(oridata['list']) == 0:
+        return -1
     return oridata['list'][0]['cumulate_user']
 
 if __name__ == '__main__':

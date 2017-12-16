@@ -26,7 +26,7 @@ sys.setdefaultencoding('utf8')
 class MyWXBot(WXBot):
     def handle_msg_all(self, msg):
         print 'msg:',msg
-        self.send_kecheng_v2(msg,'乐乐乐')
+        self.send_kecheng_v2(msg,'IC交流群3|大同学吧')
 
         #self.get_fixFriendMsg('大同学吧小助手',msg)
         # if msg['msg_type_id'] == 4 and msg['content']['type'] == 0:
@@ -42,7 +42,7 @@ class MyWXBot(WXBot):
         # t1.start()
         # t2 = threading.Thread(target=self.send_unsovled_q,args={})
         # t2.start()
-        t3 = threading.Thread(target=self.send_msg_to_group,args=('乐乐乐',))
+        t3 = threading.Thread(target=self.send_msg_to_group,args=('IC交流群3|大同学吧',))
         t3.start()
 
     def send_kecheng_v2(self,msg,qunName):
@@ -82,6 +82,7 @@ class MyWXBot(WXBot):
             # send_msg = '@%s,%s' % (eval(result[0][1]),welWord)
             #self.send_msg_by_uid(send_msg,msg['user']['id'])
             self.has_newer = True
+            self.newerList.append(eval(result[0][1]))
 
     #获取发送图片的成员
     def get_send_img_members(self,qunPinyin,msg):
@@ -127,7 +128,7 @@ class MyWXBot(WXBot):
         if msg['msg_type_id'] == 37:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
-            textArr = [replyMsg.replyMsg['auto_add']]
+            textArr = [replyMsg['auto_add']]
             if not self.auauto_rep:
                 self.auto_rep = Auto_replyer()
             # retData = self.auto_rep.replyByMsg(msg)
@@ -171,14 +172,14 @@ class MyWXBot(WXBot):
                     self.send_img_msg_by_uid(img, groupId)
                 # self.send_msg_by_uid(send_msg, groupId)
                 self.has_newer = False
-            time.sleep(60)
+            time.sleep(2 * 60)
 
     def getGroupId(self,NickName):
         if NickName in self.groupId_dict and len(self.groupId_dict[NickName])>0:
             return self.groupId_dict[NickName]
         groupId = ''
-        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\group_list.json')
-        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp\group_list.json')))
+        print os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')
+        group_list = json.load(open(os.path.join(os.path.split(os.path.abspath(__file__))[0],'temp/group_list.json')))
         # print 'group_list:',group_list
         for group in group_list:
             # print 'group:',group
