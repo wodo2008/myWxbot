@@ -125,6 +125,7 @@ class WXBot:
         self.redis = None
         self.paramDict = {}
         self.has_newer = False
+        self.newerList = []
 
     #在未传入bot_conf的情况下尝试载入本地配置文件，WxbotManage使用
     def load_conf(self,bot_conf):
