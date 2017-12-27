@@ -2,11 +2,14 @@
 # coding: utf-8
 #
 
-from script.wxbot1 import *
 # import redis
 import time
-from datastatis_ploty import line_plot
+
 import redis
+from script.wxbot1 import *
+
+from processor.datastatis_ploty import line_plot
+
 
 def init_redis(host,port,db,password=None):
     if password :
