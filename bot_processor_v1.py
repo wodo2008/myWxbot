@@ -76,8 +76,8 @@ class MyWXBot(WXBot):
         reply_to_sender = None
         content_type = 'img'
         if group_alias and group_alias in group_reply:
-            reply_to_sender = group_reply[content_type][group_alias]
-            reply_to_group = group_reply[content_type][group_alias]
+            reply_to_sender = group_reply[group_alias][content_type]['reply_to_sender']
+            reply_to_group = group_reply[group_alias][content_type]['reply_to_group']
         if reply_to_group:
             texts = reply_to_group['texts']
             imgs = reply_to_group['imgs']
