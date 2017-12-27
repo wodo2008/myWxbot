@@ -125,7 +125,8 @@ class MyWXBot(WXBot):
 
     #自动同意好友请求并发信息
     def auto_add_member_sendMsg(self,qunName,msg):
-        if msg['msg_type_id'] == 37:
+        print 'auto_add_member_sendMsg:',msg
+        if msg['msg_type_id'] in [37]:
             self.apply_useradd_requests(msg['content']['data'])
             user_id = msg['content']['data']['UserName']
             textArr = [replyMsg['auto_add']]
