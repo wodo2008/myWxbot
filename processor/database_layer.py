@@ -11,9 +11,8 @@ class database_layer(object):
         mongo_conn = pymongo.MongoClient(mongo_host)
         self.table = mongo_conn['eke'][project_name]
 
-    def get_by_userid(self,userid):
+    def get_by_query(self,query):
         print 'database_layer:get_by_userid'
-        query = {'user_id':userid}
         return self.table.find_one(query)
 
     def save(self,item):

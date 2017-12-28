@@ -57,7 +57,7 @@ class send_kecheng(object):
 
     def group_img_process(self, user_id):
         query = {'user_id':user_id}
-        data = self.dl.get_by_userid(query)
+        data = self.dl.get_by_query(query)
         if not data:
             data = {}
             data['user_id'] = user_id
@@ -72,7 +72,7 @@ class send_kecheng(object):
 
     def friend_phone_process(self,user_id,phoneNum):
         query = {'user_id':user_id}
-        data = self.dl.get_by_userid(query)
+        data = self.dl.get_by_query(query)
         if not data:
             data = {}
             data['user_id'] = user_id

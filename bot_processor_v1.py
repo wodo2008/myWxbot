@@ -4,6 +4,7 @@ import json
 import threading
 import time
 import redis
+from contents import replyMsg
 from processor.send_kecheng import send_kecheng
 from wxbot import *
 
@@ -28,10 +29,14 @@ class MyWXBot(WXBot):
         self.msg_dispather(msg)
 
     def schedule(self):
-        pass
+        t3 = threading.Thread(target=self.send_msg_to_group,args=('可测试性设计理论和实践-DFT',))
+        t3.start()
 
 
     def msg_dispather(self,msg):
+
+        self.group_newer_response(self,'可测试性设计理论和实践-DFT',msg,'')
+
         msg_type_id = msg['msg_type_id']
         content_type = msg['content']['type']
         if content_type in [3] and 'detail' in msg['content']:
@@ -215,6 +220,51 @@ class MyWXBot(WXBot):
         print NickName, 'is:', groupId
         self.groupId_dict[NickName] = groupId
         return groupId
+
+########################################################
+    #定时向群发通知
+    def send_msg_to_group(self,groupname):
+        groupId = self.getGroupId(groupname)
+        send_msg = replyMsg['group_welWord']
+        while True:
+            print 'has newer:',self.has_newer
+            if self.has_newer:
+                textArr = replyMsg['auto_txt']
+                imgArr = replyMsg['auto_msg']
+                for t in textArr:
+                    self.send_msg_by_uid(t, groupId)
+                for img in imgArr:
+                    self.send_img_msg_by_uid(img, groupId)
+                # self.send_msg_by_uid(send_msg, groupId)
+                self.has_newer = False
+            time.sleep(2 * 60)
+    #对于新加入的进行回应
+    def group_newer_response(self,g_pinyin,msg,welWord):
+        print 'group_newer_response'
+        if msg['user']['name'] == 'self':
+            ori_group_id = msg['to_user_id']
+        else:
+            ori_group_id = msg['user']['id']
+        print 'g_pinyin:',g_pinyin
+        print self.getGroupId(g_pinyin),ori_group_id
+        if not ori_group_id == self.getGroupId(g_pinyin):
+            print 'need:%s,this is %s' % (self.getGroupId(g_pinyin),ori_group_id)
+            return
+        #群文本信息
+        group_invit_1 = re.compile(u'(.*?)邀请(.*?)加入了群聊')
+        group_invit_2 = re.compile(u'(.*?)通过扫描(.*?)分享的二维码加入群聊')
+        if msg['msg_type_id'] == 3 and msg['content']['type'] == 12:
+            result1 = group_invit_1.findall(msg['content']['data'])
+            result2 = group_invit_2.findall(msg['content']['data'])
+            result = result1 if len(result1) > 0 else result2
+            #print result1,result2,result
+            if len(result) <= 0:
+                return
+            # send_msg = '@%s,%s' % (eval(result[0][1]),welWord)
+            #self.send_msg_by_uid(send_msg,msg['user']['id'])
+            self.has_newer = True
+            self.newerList.append(eval(result[0][1]))
+
 
 
     '''
