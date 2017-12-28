@@ -74,8 +74,7 @@ class MyWXBot(WXBot):
             texts = reply_to_group.get('texts',None)
             imgs = reply_to_group.get('imgs',None)
             groups = reply_to_group.get('groups',None)
-            self.send_msg_to_friend(user_id,texts,imgs,groups)
-        self.send_msg_to_group(group_id,texts,imgs,groups)
+            self.send_msg_to_group(group_id,texts,imgs,groups)
 
     def group_process(self,msg):
         config = self.get_setting_config()

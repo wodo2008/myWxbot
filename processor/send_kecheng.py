@@ -5,7 +5,7 @@ from database_layer import database_layer
 
 class send_kecheng(object):
     def __init__(self):
-        project_name = ''
+        project_name = 'send_kecheng_v2'
         self.dl = database_layer(project_name)
 
     def group_process_backend(self,msg,config):
