@@ -32,9 +32,11 @@ class MyWXBot(WXBot):
 
 
     def msg_dispather(self,msg):
-        print 'msg:',msg
         msg_type_id = msg['msg_type_id']
         content_type = msg['content']['type']
+        if content_type in [3]:
+            del msg['content']['detail']
+        print 'msg:',msg
         if msg_type_id in [37]:
             self.auto_add_friend(msg)
         elif msg_type_id in [4]:
