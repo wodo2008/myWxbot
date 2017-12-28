@@ -34,7 +34,7 @@ class MyWXBot(WXBot):
     def msg_dispather(self,msg):
         msg_type_id = msg['msg_type_id']
         content_type = msg['content']['type']
-        if content_type in [3]:
+        if content_type in [3] and 'detail' in msg['content']:
             del msg['content']['detail']
         print 'msg:',msg
         if msg_type_id in [37]:
