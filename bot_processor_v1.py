@@ -29,7 +29,7 @@ class MyWXBot(WXBot):
         self.msg_dispather(msg)
 
     def schedule(self):
-        t3 = threading.Thread(target=self.send_msg_to_group,args=('可测试性设计理论和实践-DFT',))
+        t3 = threading.Thread(target=self.send_msg_to_group_schedule,args=('可测试性设计理论和实践-DFT',))
         t3.start()
 
 
@@ -223,7 +223,7 @@ class MyWXBot(WXBot):
 
 ########################################################
     #定时向群发通知
-    def send_msg_to_group(self,groupname):
+    def send_msg_to_group_schedule(self,groupname):
         groupId = self.getGroupId(groupname)
         send_msg = replyMsg['group_welWord']
         while True:
