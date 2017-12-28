@@ -141,6 +141,9 @@ class MyWXBot(WXBot):
             imgs = [imgs]
         if not isinstance(groups,list):
             groups = [groups]
+        print 'texts:',texts
+        print 'imgs:',imgs
+        print 'groups:',groups
         for text in texts:
             self.send_msg_by_uid(text, group_id)
         for img in imgs:
@@ -161,13 +164,15 @@ class MyWXBot(WXBot):
             imgs = [imgs]
         if not isinstance(groups,list):
             groups = [groups]
-
+        print 'texts:',texts
+        print 'imgs:',imgs
+        print 'groups:',groups
         for text in texts:
             self.send_msg_by_uid(text, user_id)
         for img in imgs:
             self.send_img_msg_by_uid(img, user_id)
         for group in groups:
-            self.self.add_friend_to_group(user_id,group)
+            self.add_friend_to_group(user_id,group)
 
     def get_setting_config(self):
         if (not self.config) or self.need_reload():

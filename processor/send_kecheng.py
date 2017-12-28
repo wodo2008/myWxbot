@@ -30,6 +30,8 @@ class send_kecheng(object):
                 reply_to_group['group_id'] = ori_group_id
                 reply_to_sender['text'] = config['group_process_backend']['reply_to_sender']['no_phone']
                 reply_to_sender['user_id'] = user_id
+        print 'reply_to_sender:',reply_to_sender
+        print 'reply_to_group:',reply_to_group
         return reply_to_sender, reply_to_group
 
 
@@ -48,6 +50,8 @@ class send_kecheng(object):
                 elif status == 'no_img':
                     reply_to_sender['text'] = config['friend_process_backend']['reply_to_sender']['no_img']
                     reply_to_sender['user_id'] = user_id
+        print 'reply_to_sender:',reply_to_sender
+        print 'reply_to_group:',reply_to_group
         return reply_to_sender, reply_to_group
 
 
