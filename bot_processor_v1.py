@@ -106,7 +106,7 @@ class MyWXBot(WXBot):
             texts = reply_to_sender['texts']
             imgs = reply_to_sender['imgs']
             group_names = reply_to_sender['group_names']
-            self.send_msg_to_friend(self, sender_id, texts, imgs, group_names)
+            self.send_msg_to_friend(sender_id, texts, imgs, group_names)
         #处理后台数据
         self.group_process_backend(msg)
 
