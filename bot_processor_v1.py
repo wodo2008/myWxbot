@@ -2,19 +2,14 @@
 
 import json
 import threading
-import redis
 import time
-
-from contents import replyMsg
-#from processor.auto_replyer_v2 import Auto_replyer
-from processor.datastatis_ploty import line_plot
-# import redis
-from processor.qaProcessor import QaProcessor
+import redis
+from processor.send_kecheng import send_kecheng
 from wxbot import *
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
+#
 def init_redis(host,port,db,password=None):
     if password :
         pool = redis.ConnectionPool(host=host,port=int(port),db=int(db),password=password)
@@ -23,6 +18,10 @@ def init_redis(host,port,db,password=None):
     return redis.Redis(connection_pool=pool)
 
 class MyWXBot(WXBot):
+
+    def __init__(self):
+        WXBot.__init__(self)
+        self.send_kecheng = send_kecheng()
 
     def handle_msg_all(self, msg):
         #消息处理分发
@@ -35,13 +34,14 @@ class MyWXBot(WXBot):
     def msg_dispather(self,msg):
         print 'msg:',msg
         msg_type_id = msg['msg_type_id']
+        content_type = msg['content']['type']
         if msg_type_id in [37]:
             self.auto_add_friend(msg)
         elif msg_type_id in [4]:
             self.friend_process(msg)
-        elif msg_type_id in [3]:
+        #接收群图片
+        elif msg_type_id in [3] and content_type in [3]:
             self.group_process(msg)
-
 
     def friend_process(self,msg):
         config = self.get_setting_config()
@@ -51,12 +51,31 @@ class MyWXBot(WXBot):
         texts = None
         imgs = None
         group_names = None
+        #处理自动回复
         if keyword in friend_text_reply:
             contents = friend_text_reply[keyword]
             texts = contents['texts']
             imgs = contents['imgs']
             group_names = contents['group_names']
         self.send_msg_to_friend(user_id,texts,imgs,group_names)
+        #处理后台数据
+        self.friend_process_backend(msg)
+
+    def friend_process_backend(self,msg):
+        reply_to_sender, reply_to_group = self.send_kecheng.friend_process_backend(msg,self.get_setting_config())
+        if 'user_id' in reply_to_sender:
+            user_id = reply_to_sender['user_id']
+            texts = reply_to_sender.get('texts',None)
+            imgs = reply_to_sender.get('imgs',None)
+            groups = reply_to_sender.get('groups',None)
+            self.send_msg_to_friend(user_id,texts,imgs,groups)
+        if 'group_id' in reply_to_group:
+            group_id = reply_to_group['group_id']
+            texts = reply_to_group.get('texts',None)
+            imgs = reply_to_group.get('imgs',None)
+            groups = reply_to_group.get('groups',None)
+            self.send_msg_to_friend(user_id,texts,imgs,groups)
+        self.send_msg_to_group(group_id,texts,imgs,groups)
 
     def group_process(self,msg):
         config = self.get_setting_config()
@@ -88,34 +107,66 @@ class MyWXBot(WXBot):
             imgs = reply_to_sender['imgs']
             group_names = reply_to_sender['group_names']
             self.send_msg_to_friend(self, sender_id, texts, imgs, group_names)
+        #处理后台数据
+        self.group_process_backend(msg)
+
+    def group_process_backend(self,msg):
+        reply_to_sender, reply_to_group = self.send_kecheng.group_process_backend(msg,self.get_setting_config())
+        if 'user_id' in reply_to_sender:
+            user_id = reply_to_sender['user_id']
+            texts = reply_to_sender.get('texts',None)
+            imgs = reply_to_sender.get('imgs',None)
+            groups = reply_to_sender.get('groups',None)
+            self.send_msg_to_friend(user_id,texts,imgs,groups)
+        if 'group_id' in reply_to_group:
+            group_id = reply_to_group['group_id']
+            texts = reply_to_group.get('texts',None)
+            imgs = reply_to_group.get('imgs',None)
+            groups = reply_to_group.get('groups',None)
+            self.send_msg_to_friend(user_id,texts,imgs,groups)
+        self.send_msg_to_group(group_id,texts,imgs,groups)
+
 
     def send_msg_to_group(self,group_id,texts,imgs,groups):
         if not group_id:
             print 'send_msg_to_friend:no user_id'
             return
-        if texts and isinstance(texts,list):
-            for text in texts:
-                self.send_msg_by_uid(text, group_id)
-        if imgs and isinstance(imgs, list):
-            for img in imgs:
-                self.send_img_msg_by_uid(img, group_id)
-        if groups and isinstance(groups, list):
-            for group in groups:
-                self.self.add_friend_to_group(group_id,group)
+        texts = [] if not texts else texts
+        imgs = [] if not imgs else imgs
+        groups = [] if not groups else groups
+        if not isinstance(texts,list):
+            texts = [texts]
+        if not isinstance(imgs,list):
+            imgs = [imgs]
+        if not isinstance(groups,list):
+            groups = [groups]
+        for text in texts:
+            self.send_msg_by_uid(text, group_id)
+        for img in imgs:
+            self.send_img_msg_by_uid(img, group_id)
+        for group in groups:
+            self.self.add_friend_to_group(group_id,group)
 
     def send_msg_to_friend(self,user_id,texts,imgs,groups):
         if not user_id:
             print 'send_msg_to_friend:no user_id'
             return
-        if texts and isinstance(texts,list):
-            for text in texts:
-                self.send_msg_by_uid(text, user_id)
-        if imgs and isinstance(imgs, list):
-            for img in imgs:
-                self.send_img_msg_by_uid(img, user_id)
-        if groups and isinstance(groups, list):
-            for group in groups:
-                self.self.add_friend_to_group(user_id,group)
+        texts = [] if not texts else texts
+        imgs = [] if not imgs else imgs
+        groups = [] if not groups else groups
+        if not isinstance(texts,list):
+            texts = [texts]
+        if not isinstance(imgs,list):
+            imgs = [imgs]
+        if not isinstance(groups,list):
+            groups = [groups]
+
+        for text in texts:
+            self.send_msg_by_uid(text, user_id)
+        for img in imgs:
+            self.send_img_msg_by_uid(img, user_id)
+        for group in groups:
+            self.self.add_friend_to_group(user_id,group)
 
     def get_setting_config(self):
         if (not self.config) or self.need_reload():
@@ -161,8 +212,7 @@ class MyWXBot(WXBot):
 
 
     '''
-    
-    
+
     #对于新加入的进行回应
     def group_newer_response(self,g_pinyin,msg,welWord):
         print 'group_newer_response'

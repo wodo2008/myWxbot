@@ -2,25 +2,20 @@
 
 import pymongo
 
-class Database_layer(object):
-    def __init__(self,conf):
+class database_layer(object):
+    def __init__(self,project_name):
+        conf = {
+            "mongo":{"host":"mongodb://127.0.0.1:27017"}
+        }
         mongo_host = conf['mongo']['host']
         mongo_conn = pymongo.MongoClient(mongo_host)
-        self.user_identi_code = mongo_conn.eke.user_identi_code
-        self.user_res_process = mongo_conn.eke.user_res_process
+        self.table = mongo_conn['eke'][project_name]
 
-    def get_uic_Item(self,query):
-        print 'get_uic_Item'
-        return self.user_identi_code.find_one(query)
+    def get_by_userid(self,userid):
+        print 'database_layer:get_by_userid'
+        query = {'user_id':userid}
+        return self.table.find_one(query)
 
-    def save_uic_Item(self,item):
-        print 'save_uic_Item'
-        self.user_identi_code.save(item)
-
-    def get_urp_Item(self,query):
-        print 'get_urp_Item'
-        return self.user_res_process.find_one(query)
-
-    def save_urp_Item(self,item):
-        print 'save_urp_Item'
-        self.user_res_process.save(item)
+    def save(self,item):
+        print 'database_layer:save'
+        self.table.save(item)

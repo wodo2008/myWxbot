@@ -24,6 +24,7 @@ sys.setdefaultencoding('utf8')
 #     return redis.Redis(connection_pool=pool)
 
 class MyWXBot(WXBot):
+
     def handle_msg_all(self, msg):
         print 'msg:',msg
         self.send_kecheng_v2(msg,'IC交流群3|大同学吧')
