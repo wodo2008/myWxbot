@@ -1,0 +1,58 @@
+{
+  "reply_keyword":["课程","社群"],
+  "friend_text_reply":{
+    "课程":{
+      "texts":["您好！如需报名参加此次课程，请加入微信群【可测试性设计理论和实践-DFT】，群中有此次活动报名的详细信息~\n\n另外，为了后续开通课程（课程登录账号及密码均为手机号）及发送短信通知，请提前回复您的手机号码给小助手~"],
+      "imgs":[],
+      "group_names":[]
+    },
+    "社群":{
+      "texts":["hello,shequn"],
+      "imgs":[],
+      "group_names":[]
+    }
+  },
+  "group_reply":{
+    "group01":{
+      "img":{
+        "reply_to_sender":{
+          "texts":[],
+          "imgs":[],
+          "group_names":[]
+          },
+        "reply_to_group":{
+          "texts":[],
+          "imgs":[],
+          "group_names":[]
+          }
+      }
+    }
+  },
+  "group_alias":{
+    "group01":["可测试性设计理论和实践-DFT"]
+  },
+  "group_process_backend":{
+    "reply_to_group":{
+      "both_has":"",
+      "no_phone":"",
+      "no_img":""
+    },
+    "reply_to_sender":{
+      "both_has":"您的截图已收到，恭喜您报名成功，本次课程将于明天中午12点开通（登录E课网，E课网新用户：用户名及密码均为手机号，E课网老用户：用户名为手机号，密码不变），届时将有短信通知~",
+      "no_phone":"您的截图已收到，不过我们好像还没有收到您的号码为了后续能够正常开通课程（课程登录账号及密码均为手机号），请务必回复您的手机号码给小助手，谢谢~",
+      "no_img":""
+    }
+  },
+  "friend_process_backend": {
+    "reply_to_group": {
+      "both_has": "",
+      "no_phone": "",
+      "no_img":""
+    },
+    "reply_to_sender": {
+      "both_has": "您的号码已收到，恭喜您报名成功，本次课程将于明天中午12点开通（登录E课网，E课网新用户：用户名及密码均为手机号，E课网老用户：用户名为手机号，密码不变），届时将有短信通知~",
+      "no_phone": "",
+      "no_img":"您的号码已收到，只需再将此次活动分享到朋友圈即可开通课程权限（具体报名方式参见【可测试性设计理论和实践-DFT】微信群里中的通知）~"
+    }
+  }
+}
